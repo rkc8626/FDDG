@@ -1,0 +1,292 @@
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Downloading: "https://download.pytorch.org/models/resnet50-0676ba61.pth" to /home/chenz1/.cache/torch/hub/checkpoints/resnet50-0676ba61.pth
+  0%|          | 0.00/97.8M [00:00<?, ?B/s] 12%|#2        | 11.8M/97.8M [00:00<00:00, 123MB/s] 33%|###2      | 32.1M/97.8M [00:00<00:00, 174MB/s] 55%|#####5    | 54.1M/97.8M [00:00<00:00, 196MB/s] 77%|#######7  | 75.6M/97.8M [00:00<00:00, 207MB/s] 98%|#########8| 96.1M/97.8M [00:00<00:00, 208MB/s]100%|##########| 97.8M/97.8M [00:00<00:00, 200MB/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator)]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1480, in _next_data
+    return self._process_data(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1505, in _process_data
+    data.reraise()
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/_utils.py", line 733, in reraise
+    raise exception
+FileNotFoundError: Caught FileNotFoundError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+            ~~~~~~~~~~~~^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 73, in __getitem__
+    return self.underlying_dataset[self.keys[key]]
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/datasets.py", line 209, in __getitem__
+    image = Image.open(img_path).convert('RGB')
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/PIL/Image.py", line 3465, in open
+    fp = builtins.open(filename, "rb")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/chenz1/toorange/Data/bdd100k_person/images/255400b7-0def2a8f.jpg'
+
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 231, in <module>
+    step_vals = algorithm.update(minibatches_device, uda_device)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/algorithms.py", line 83, in update
+    loss = F.cross_entropy(self.predict(all_x), all_y)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/nn/functional.py", line 3494, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IndexError: Target 99 is out of bounds.
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator)]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1480, in _next_data
+    return self._process_data(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1505, in _process_data
+    data.reraise()
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/_utils.py", line 733, in reraise
+    raise exception
+TypeError: Caught TypeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 398, in default_collate
+    return collate(batch, collate_fn_map=default_collate_fn_map)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 212, in collate
+    collate(samples, collate_fn_map=collate_fn_map)
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 240, in collate
+    raise TypeError(default_collate_err_msg_format.format(elem_type))
+TypeError: default_collate: batch must contain tensors, numpy arrays, numbers, dicts or lists; found <class 'NoneType'>
+
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 231, in <module>
+    step_vals = algorithm.update(minibatches_device, uda_device)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/algorithms.py", line 83, in update
+    loss = F.cross_entropy(self.predict(all_x), all_y)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/nn/functional.py", line 3494, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IndexError: Target 2 is out of bounds.
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1480, in _next_data
+    return self._process_data(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1505, in _process_data
+    data.reraise()
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/_utils.py", line 733, in reraise
+    raise exception
+TypeError: Caught TypeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 398, in default_collate
+    return collate(batch, collate_fn_map=default_collate_fn_map)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 212, in collate
+    collate(samples, collate_fn_map=collate_fn_map)
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 240, in collate
+    raise TypeError(default_collate_err_msg_format.format(elem_type))
+TypeError: default_collate: batch must contain tensors, numpy arrays, numbers, dicts or lists; found <class 'NoneType'>
+
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1480, in _next_data
+    return self._process_data(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1505, in _process_data
+    data.reraise()
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/_utils.py", line 733, in reraise
+    raise exception
+TypeError: Caught TypeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 398, in default_collate
+    return collate(batch, collate_fn_map=default_collate_fn_map)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 212, in collate
+    collate(samples, collate_fn_map=collate_fn_map)
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 240, in collate
+    raise TypeError(default_collate_err_msg_format.format(elem_type))
+TypeError: default_collate: batch must contain tensors, numpy arrays, numbers, dicts or lists; found <class 'NoneType'>
+
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1480, in _next_data
+    return self._process_data(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1505, in _process_data
+    data.reraise()
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/_utils.py", line 733, in reraise
+    raise exception
+TypeError: Caught TypeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 398, in default_collate
+    return collate(batch, collate_fn_map=default_collate_fn_map)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 212, in collate
+    collate(samples, collate_fn_map=collate_fn_map)
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/collate.py", line 240, in collate
+    raise TypeError(default_collate_err_msg_format.format(elem_type))
+TypeError: default_collate: batch must contain tensors, numpy arrays, numbers, dicts or lists; found <class 'NoneType'>
+
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1480, in _next_data
+    return self._process_data(data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/dataloader.py", line 1505, in _process_data
+    data.reraise()
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/_utils.py", line 733, in reraise
+    raise exception
+TypeError: Caught TypeError in DataLoader worker process 0.
+Original Traceback (most recent call last):
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/worker.py", line 349, in _worker_loop
+    data = fetcher.fetch(index)  # type: ignore[possibly-undefined]
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+            ~~~~~~~~~~~~^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 73, in __getitem__
+    return self.underlying_dataset[self.keys[key]]
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/datasets.py", line 257, in __getitem__
+    y = torch.tensor(gender, dtype=torch.long)  # Using gender as the main task
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object cannot be interpreted as an integer
+
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 233, in <module>
+    write_loss(step, algorithm, train_writer)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 197, in write_loss
+    train_writer.add_scalar("loss", trainer.loss, iterations + 1)
+                                    ^^^^^^^^^^^^
+  File "/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1928, in __getattr__
+    raise AttributeError(
+AttributeError: 'ERM' object has no attribute 'loss'

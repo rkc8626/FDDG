@@ -222,7 +222,7 @@ if __name__ == "__main__":
         step_start_time = time.time()
         # train minibathes train/uda/eval
         minibatches_device = [(x.to(device), y.to(device), z.to(device))
-        for x, y, z in next(train_minibatches_iterator)]
+        for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
         if args.task == "domain_adaptation":
             uda_device = [x.to(device)
                 for x,_ in next(uda_minibatches_iterator)]
