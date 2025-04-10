@@ -1,4 +1,3 @@
-
 import os
 import torch
 from PIL import Image, ImageFile
@@ -22,7 +21,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 DATASETS = [
     "Debug28",
     "Debug224",
-    "CCMNIST1"
+    "CCMNIST1",
     "FairFace",
     "VLCS",
     "PACS",
@@ -31,7 +30,9 @@ DATASETS = [
     "DomainNet",
     "SVIRO",
     "WILDSCamelyon",
-    "WILDSFMoW"
+    "WILDSFMoW",
+    "Dataset100k",
+    "BDD100kPerson"
 ]
 
 def get_dataset_class(dataset_name):
@@ -122,7 +123,7 @@ class SensitiveImageFolder(ImageFolder):
         path, target = self.samples[index]
         file_name = path.split('/')[-1]
 
-        z = self.dict[file_name][2]
+        z = self.dict[file_name][2] #
         sample = self.loader(path)
         if self.transform is not None:
             sample = self.transform(sample)
@@ -184,6 +185,98 @@ class CCMNIST1(MultipleEnvironmentImageFolder):
     def __init__(self, root, test_envs,hparams):
         self.dir = os.path.join("/home/YOUR_PATH/data/CCMNIST1/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
+
+class BDD100k(MultipleEnvironmentImageFolder):
+    CHECKPOINT_FREQ = 500
+    # N_WORKERS = 4
+
+class BDD100kPersonEnv(Dataset):
+    def __init__(self, root_dir, json_file, transform=None):
+        self.root_dir = root_dir
+        with open(json_file, 'r') as f:
+            self.annotations = json.load(f)
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.annotations)
+
+    def __getitem__(self, idx):
+        ann = self.annotations[idx]
+        img_name = ann['image_name']
+        img_path = os.path.join(self.root_dir, f"{img_name}.jpg")
+
+        # Load image and crop the person region
+        image = Image.open(img_path).convert('RGB')
+        # Crop the person region using bounding box
+        x1, y1, x2, y2 = ann['x1'], ann['y1'], ann['x2'], ann['y2']
+        image = image.crop((x1, y1, x2, y2))
+
+        if self.transform:
+            image = self.transform(image)
+
+        # Get demographic attributes
+        age = ann['age']      # age attribute (0/1)
+        gender = ann['gender']  # gender attribute (0/1)
+        skin = ann['skin']    # skin attribute (0/1)
+
+        # You can modify which attribute to use as main task (y) and sensitive attribute (z)
+        y = gender  # Using gender as the main task
+        z = skin    # Using skin color as the sensitive attribute
+
+        return image, y, z
+
+class BDD100kPerson(MultipleDomainDataset):
+    N_WORKERS = 4
+    CHECKPOINT_FREQ = 300
+    ENVIRONMENTS = ['train', 'val', 'test']  # Different splits of the dataset
+    INPUT_SHAPE = (3, 224, 224)
+
+    def __init__(self, root, test_envs, hparams):
+        super().__init__()
+
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            )
+        ])
+
+        augment_transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.RandomResizedCrop(224, scale=(0.7, 1.0)),
+            transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(0.3, 0.3, 0.3, 0.3),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            )
+        ])
+
+        # Base path for the BDD100k person dataset
+        data_path = "/home/chenz1/toorange/Data/bdd100k_person"
+
+        self.datasets = []
+
+        # Create datasets for each environment using the same fair_labels.json
+        # but different transforms for train/val/test
+        for i, env in enumerate(self.ENVIRONMENTS):
+            if hparams['data_augmentation'] and (i not in test_envs):
+                env_transform = augment_transform
+            else:
+                env_transform = transform
+
+            env_dataset = BDD100kPersonEnv(
+                os.path.join(data_path, "images"),
+                os.path.join(data_path, "fair_labels.json"),
+                transform=env_transform
+            )
+            self.datasets.append(env_dataset)
+
+        self.input_shape = (3, 224, 224)
+        self.num_classes = 2  # Binary classification (0/1)
 
 class FairFace(MultipleEnvironmentImageFolder):
     N_WORKERS = 4
@@ -336,3 +429,92 @@ class WILDSFMoW(WILDSDataset):
         dataset = FMoWDataset(root_dir=root)
         super().__init__(
             dataset, "region", test_envs, hparams['data_augmentation'], hparams)
+
+# class Dataset100kEnv(Dataset):
+#     def __init__(self, root_dir, json_file, transform=None):
+#         self.root_dir = root_dir
+#         with open(json_file, 'r') as f:
+#             self.annotations = json.load(f)
+#         self.transform = transform
+
+#     def __len__(self):
+#         return len(self.annotations)
+
+#     def __getitem__(self, idx):
+#         ann = self.annotations[idx]
+#         img_name = ann['new_image_name']
+#         img_path = os.path.join(self.root_dir, f"{img_name}.jpg")
+
+#         # Load image
+#         image = Image.open(img_path).convert('RGB')
+#         if self.transform:
+#             image = self.transform(image)
+
+#         # Get labels
+#         category = ann['category']
+#         weather = ann['weather']
+#         scene = ann['scene']
+#         timeofday = ann['timeofday']
+
+#         # You can modify these mappings based on your needs
+#         category_map = {'traffic sign': 0, 'traffic light': 1, 'car': 2}
+#         weather_map = {'clear': 0, 'snowy': 1, 'rainy': 2, 'overcast': 3}
+#         timeofday_map = {'daytime': 0, 'night': 1, 'dawn/dusk': 2}
+
+# # y represents what object is in the image (traffic sign, traffic light, or car
+#         y = category_map[category]  # Main task label
+# # z represents the domain/environment condition (weather condition) under which the image was taken
+#         z = weather_map[weather]    # Domain label (you can change this to scene or timeofday if needed)
+
+#         return image, y, z
+
+# class Dataset100k(MultipleDomainDataset):
+#     N_WORKERS = 4
+#     CHECKPOINT_FREQ = 300
+#     ENVIRONMENTS = ['clear', 'snowy', 'rainy', 'overcast']  # Based on weather conditions
+#     INPUT_SHAPE = (3, 224, 224)  # We'll resize all images to 224x224
+
+#     def __init__(self, root, test_envs, hparams):
+#         super().__init__()
+
+#         transform = transforms.Compose([
+#             transforms.Resize((224, 224)),
+#             transforms.ToTensor(),
+#             transforms.Normalize(
+#                 mean=[0.485, 0.456, 0.406],
+#                 std=[0.229, 0.224, 0.225]
+#             )
+#         ])
+
+#         # Paths for your dataset
+#         data_path = "/home/chenz1/toorange/Data/100k"
+
+#         # Create datasets for each environment (train, val, test)
+#         self.datasets = []
+
+#         # Training set
+#         train_data = Dataset100kEnv(
+#             os.path.join(data_path, "train_cropped"),
+#             os.path.join(data_path, "train_labels.json"),
+#             transform=transform
+#         )
+#         self.datasets.append(train_data)
+
+#         # Validation set
+#         val_data = Dataset100kEnv(
+#             os.path.join(data_path, "val_cropped"),
+#             os.path.join(data_path, "val_labels.json"),
+#             transform=transform
+#         )
+#         self.datasets.append(val_data)
+
+#         # Test set
+#         test_data = Dataset100kEnv(
+#             os.path.join(data_path, "test_cropped"),
+#             os.path.join(data_path, "test_labels.json"),
+#             transform=transform
+#         )
+#         self.datasets.append(test_data)
+
+#         self.input_shape = (3, 224, 224)
+#         self.num_classes = 3  # traffic sign, traffic light, car
