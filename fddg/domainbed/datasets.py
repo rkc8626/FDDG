@@ -193,37 +193,81 @@ class BDD100k(MultipleEnvironmentImageFolder):
 class BDD100kPersonEnv(Dataset):
     def __init__(self, root_dir, json_file, transform=None):
         self.root_dir = root_dir
-        with open(json_file, 'r') as f:
-            self.annotations = json.load(f)
+        print(f"Initializing BDD100kPersonEnv with root_dir: {root_dir}")
+        print(f"Loading annotations from: {json_file}")
+        try:
+            with open(json_file, 'r') as f:
+                all_annotations = json.load(f)
+            print(f"Loaded {len(all_annotations)} total annotations")
+
+            # Filter out invalid annotations
+            self.annotations = []
+            for ann in all_annotations:
+                try:
+                    img_name = ann['image_name']
+                    img_path = os.path.join(root_dir, f"{img_name}.jpg")
+
+                    # Check if image exists and has required attributes
+                    if (os.path.exists(img_path) and
+                        all(k in ann for k in ['x1', 'y1', 'x2', 'y2', 'age', 'gender', 'skin'])):
+                        if ann['age'] is not None and ann['gender'] is not None and ann['skin'] is not None:
+                            self.annotations.append(ann)
+                except:
+                    continue
+
+            print(f"Found {len(self.annotations)} valid annotations")
+            if len(self.annotations) == 0:
+                raise RuntimeError("No valid annotations found!")
+
+        except Exception as e:
+            print(f"Error loading annotations: {e}")
+            raise
         self.transform = transform
 
     def __len__(self):
         return len(self.annotations)
 
     def __getitem__(self, idx):
-        ann = self.annotations[idx]
-        img_name = ann['image_name']
-        img_path = os.path.join(self.root_dir, f"{img_name}.jpg")
+        try:
+            print(f"Loading item {idx}")
+            ann = self.annotations[idx]  # This should be valid as we filtered in __init__
+            # Get demographic attributes (these should exist as we filtered in __init__)
+            age = ann['age']      # age attribute (0/1)
+            gender = ann['gender']  # gender attribute (0/1)
+            skin = ann['skin']    # skin attribute (0/1)
+            print(f"Successfully loaded attributes: age={age}, gender={gender}, skin={skin}")
 
-        # Load image and crop the person region
-        image = Image.open(img_path).convert('RGB')
-        # Crop the person region using bounding box
-        x1, y1, x2, y2 = ann['x1'], ann['y1'], ann['x2'], ann['y2']
-        image = image.crop((x1, y1, x2, y2))
+            img_name = ann['image_name']
+            img_path = os.path.join(self.root_dir, f"{img_name}.jpg")
+            print(f"Loading image from: {img_path}")
 
-        if self.transform:
-            image = self.transform(image)
+            # Load image and crop the person region
+            image = Image.open(img_path).convert('RGB')
+            print(f"Successfully loaded image")
 
-        # Get demographic attributes
-        age = ann['age']      # age attribute (0/1)
-        gender = ann['gender']  # gender attribute (0/1)
-        skin = ann['skin']    # skin attribute (0/1)
+            # Crop the person region using bounding box
+            x1, y1, x2, y2 = ann['x1'], ann['y1'], ann['x2'], ann['y2']
+            image = image.crop((x1, y1, x2, y2))
+            print(f"Successfully cropped image to: ({x1}, {y1}, {x2}, {y2})")
 
-        # You can modify which attribute to use as main task (y) and sensitive attribute (z)
-        y = gender  # Using gender as the main task
-        z = skin    # Using skin color as the sensitive attribute
+            if self.transform:
+                image = self.transform(image)
+                print(f"Successfully applied transforms")
 
-        return image, y, z
+
+
+            # Convert to tensors
+            y = torch.tensor(gender, dtype=torch.long)  # Using gender as the main task
+            z = torch.tensor(skin, dtype=torch.long)    # Using skin color as the sensitive attribute
+
+            print(f"Successfully prepared item {idx}")
+            return image, y, z
+
+        except Exception as e:
+            print(f"Unexpected error loading item {idx}: {e}")
+            # Instead of returning None, we'll raise the exception
+            # This will make the error more visible and help with debugging
+            raise
 
 class BDD100kPerson(MultipleDomainDataset):
     N_WORKERS = 4
@@ -269,7 +313,7 @@ class BDD100kPerson(MultipleDomainDataset):
                 env_transform = transform
 
             env_dataset = BDD100kPersonEnv(
-                os.path.join(data_path, "images"),
+                os.path.join(data_path, "img"),
                 os.path.join(data_path, "fair_labels.json"),
                 transform=env_transform
             )
@@ -356,6 +400,12 @@ class WILDSEnvironment:
         self.transform = transform
 
     def __getitem__(self, i):
+        # Add debug prints
+        print(f"Loading item {i}")
+        item = ... # your loading logic
+        print(f"Loaded item type: {type(item)}")
+        return item
+
         x = self.dataset.get_input(self.indices[i])
         if type(x).__name__ != "Image":
             x = Image.fromarray(x)
