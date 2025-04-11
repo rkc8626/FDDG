@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -58,18 +57,29 @@ class Algorithm(torch.nn.Module):
         raise NotImplementedError
 
 class ERM(Algorithm):
-
+    """
+    Empirical Risk Minimization (ERM)
+    """
 
     def __init__(self, input_shape, num_classes, num_domains, hparams):
         super(ERM, self).__init__(input_shape, num_classes, num_domains,
-                                  hparams)
+                                 hparams)
         self.featurizer = networks.Featurizer(input_shape, self.hparams)
         self.classifier = networks.Classifier(
             self.featurizer.n_outputs,
             num_classes,
             self.hparams['nonlinear_classifier'])
-        self.network = nn.Sequential(self.featurizer, self.classifier)
 
+        # Combine featurizer and classifier into a network
+        self.network = torch.nn.Sequential(self.featurizer, self.classifier)
+
+        # Initialize loss attributes
+        self.loss = 0.0 
+        self.l_cls = 0.0  # classification loss
+        self.l_inv = 0.0  # invariance loss (not used in ERM but needed for logging)
+        self.l_fair = 0.0  # fairness loss (not used in ERM but needed for logging)
+        self.dual_var1 = 0.0  # dual variable 1 (not used in ERM but needed for logging)
+        self.dual_var2 = 0.0  # dual variable 2 (not used in ERM but needed for logging)
 
         self.optimizer = torch.optim.Adam(
             self.network.parameters(),
@@ -80,13 +90,26 @@ class ERM(Algorithm):
     def update(self, minibatches, unlabeled=None):
         all_x = torch.cat([x for x, y, z in minibatches])
         all_y = torch.cat([y for x, y, z in minibatches])
-        loss = F.cross_entropy(self.predict(all_x), all_y)
+        all_z = torch.cat([z for x, y, z in minibatches])
+
+        # Use network directly instead of separate featurizer and classifier
+        logits = self.network(all_x)
+        self.l_cls = F.cross_entropy(logits, all_y)
+
+        # Update total loss
+        self.loss = self.l_cls
+
+        # Other losses remain 0 as they're not used in ERM
+        self.l_inv = 0.0
+        self.l_fair = 0.0
+        self.dual_var1 = 0.0
+        self.dual_var2 = 0.0
 
         self.optimizer.zero_grad()
-        loss.backward()
+        self.loss.backward()
         self.optimizer.step()
 
-        return {'loss': loss.item()}
+        return {'loss': self.loss.item(), 'l_cls': self.l_cls.item()}
 
     def predict(self, x):
         return self.network(x)
@@ -146,7 +169,7 @@ class MBDG_Reg(MBDG_Base):
         dist_reg = self.calc_dist_reg(all_x, clean_output)
 
         loss = clean_loss + self.hparams['mbdg_lam_dist'] * dist_reg
-        
+
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
@@ -1135,7 +1158,7 @@ class ANDMask(ERM):
         self.tau = hparams["tau"]
 
     def update(self, minibatches, unlabeled=None):
-        
+
         total_loss = 0
         param_gradients = [[] for _ in self.network.parameters()]
         all_x = torch.cat([x for x,y in minibatches])
@@ -1144,14 +1167,14 @@ class ANDMask(ERM):
         for i, (x, y) in enumerate(minibatches):
             logits = all_logits[all_logits_idx:all_logits_idx + x.shape[0]]
             all_logits_idx += x.shape[0]
-            
+
             env_loss = F.cross_entropy(logits, y)
             total_loss += env_loss
 
             env_grads = autograd.grad(env_loss, self.network.parameters(), retain_graph=True)
             for grads, env_grad in zip(param_gradients, env_grads):
                 grads.append(env_grad)
-            
+
         mean_loss = total_loss / len(minibatches)
 
         self.optimizer.zero_grad()
@@ -1192,12 +1215,12 @@ class IGA(ERM):
         for i, (x, y) in enumerate(minibatches):
             logits = all_logits[all_logits_idx:all_logits_idx + x.shape[0]]
             all_logits_idx += x.shape[0]
-            
+
             env_loss = F.cross_entropy(logits, y)
             total_loss += env_loss
 
             grads.append( autograd.grad(env_loss, self.network.parameters(), retain_graph=True) )
-            
+
         mean_loss = total_loss / len(minibatches)
         mean_grad = autograd.grad(mean_loss, self.network.parameters(), retain_graph=True)
 
