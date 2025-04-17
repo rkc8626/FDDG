@@ -1,5 +1,3 @@
-
-
 import hashlib
 import json
 import os
@@ -126,38 +124,41 @@ def accuracy(network, loader, weights, device):
     network.train()
     return correct / total
 
-def md(network, loader, weights, device):
+def md(algorithm, loader, weights, device):
+    y_1_s_0 = 0
+    y_1_s_1 = 0
+    s_0 = 0
+    s_1 = 0
 
-    s_0 = 0.0
-    y_1_s_0 = 0.0
-    s_1 = 0.0
-    y_1_s_1 = 0.0
-
-
-    network.eval()
+    algorithm.eval()
     with torch.no_grad():
-        for x, y, z in loader:
+        for x, y, s in loader:
             x = x.to(device)
             y = y.to(device)
-            z = z.to(device)
-            p = network.predict(x)
-            p = p.argmax(1)
+            s = s.to(device)
 
+            p = algorithm.predict(x)
+            p = F.softmax(p, dim=1)
+            p = p[:,1]
 
-            temp_s_1 = z.sum().item()
-            temp_s_0 = z.size(0) - temp_s_1
-            temp_y_1_s_0 = torch.where(torch.logical_and(p == 1, z == 0.0), 1.0, 0.0).sum().item()
-            temp_y_1_s_1 = torch.where(torch.logical_and(p == 1, z == 1.0), 1.0, 0.0).sum().item()
+            temp_s_0 = (s == 0).sum().float()
+            temp_s_1 = (s == 1).sum().float()
+            temp_y_1_s_0 = ((s == 0) * p).sum()
+            temp_y_1_s_1 = ((s == 1) * p).sum()
 
-            s_0 += temp_s_0
             y_1_s_0 += temp_y_1_s_0
-            s_1 += temp_s_1
             y_1_s_1 += temp_y_1_s_1
+            s_0 += temp_s_0
+            s_1 += temp_s_1
 
-    network.train()
+    # Add safety checks for division by zero
+    if s_0 == 0 or s_1 == 0:
+        # Return a large value to indicate an invalid calculation
+        # or you could return None or raise a custom exception
+        return float('inf')
 
     result = abs((y_1_s_0/s_0) - (y_1_s_1/s_1))
-    return result
+    return result.item()
 
 def dp(network, loader, weights, device):
 
@@ -237,7 +238,6 @@ def eo(network, loader, weights, device):
         return 1.0 / result
 
 def auc(network, loader, weights, device):
-
     s_0 = []
     s_1 = []
     labels = []
@@ -267,10 +267,19 @@ def auc(network, loader, weights, device):
                 elif z[i].item() == 1.0:
                     s_1.append(len(labels)-1)
 
+    # Check if we have samples from both groups
+    if len(s_0) == 0 or len(s_1) == 0:
+        # Return 0.5 as a neutral AUC score when we can't compute it
+        # This indicates no discrimination (random chance)
+        network.train()
+        return 0.5
+
+    # Calculate AUC only if we have samples from both groups
     for i in range(len(s_0)):
         for j in range(len(s_1)):
             if labels[s_0[i]] > labels[s_1[j]]:
                 auc += 1.0
+
     auc = auc / (len(s_0) * len(s_1))
     network.train()
 
