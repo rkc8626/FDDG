@@ -1,4 +1,3 @@
-
 import argparse
 import collections
 import json
@@ -159,8 +158,7 @@ if __name__ == "__main__":
 
     eval_loaders = [FastDataLoader(
         dataset=env,
-        # batch_size=64,
-        batch_size=1024,
+        batch_size=64,
         num_workers=dataset.N_WORKERS)
         for env, _ in (in_splits + out_splits + uda_splits)]
     eval_weights = [None for _, weights in (in_splits + out_splits + uda_splits)]
@@ -202,6 +200,12 @@ if __name__ == "__main__":
             train_writer.add_scalar("l_fair", trainer.l_fair, iterations + 1)
         train_writer.add_scalar("dual_var1", trainer.dual_var1, iterations + 1)
         train_writer.add_scalar("dual_var2", trainer.dual_var2, iterations + 1)
+
+    def write_metrics(train_writer, metrics, step, prefix=""):
+        """Write evaluation metrics to TensorBoard"""
+        for key, value in metrics.items():
+            if isinstance(value, (int, float)):
+                train_writer.add_scalar(f"{prefix}{key}", value, step + 1)
 
     def save_checkpoint(filename):
         if args.skip_model_save:
@@ -272,6 +276,7 @@ if __name__ == "__main__":
                 dp = misc.dp(algorithm, loader, weights, device)
                 eo = misc.eo(algorithm, loader, weights, device)
                 t2 = time.time()
+                # breakpoint()
                 auc = misc.auc(algorithm, loader, weights, device)
 
                 results[name+'_acc'] = acc
@@ -279,7 +284,16 @@ if __name__ == "__main__":
                 dps[name + '_dp'] = dp
                 eos[name + '_eo'] = eo
                 aucs[name + '_auc'] = auc
-
+                
+                # Log metrics to TensorBoard
+                metrics_dict = {
+                    'accuracy': acc,
+                    'max_difference': md,
+                    'demographic_parity': dp,
+                    'equalized_odds': eo,
+                    'auc_score': auc
+                }
+                write_metrics(train_writer, metrics_dict, step, prefix=f"{name}_")
 
             results_keys = sorted(results.keys())
             mds_keys = sorted(mds.keys())

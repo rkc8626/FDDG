@@ -378,3 +378,181 @@ ZeroDivisionError: float division by zero
   warnings.warn(
 /blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
   warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 275, in <module>
+    auc = misc.auc(algorithm, loader, weights, device)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 275, in auc
+    auc = auc / (len(s_0) * len(s_1))
+ZeroDivisionError: float division by zero
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 275, in <module>
+    auc = misc.auc(algorithm, loader, weights, device)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 275, in auc
+    auc = auc / (len(s_0) * len(s_1))
+ZeroDivisionError: float division by zero
+Exception ignored in: <function _releaseLock at 0x146cc7296940>
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/logging/__init__.py", line 223, in _releaseLock
+    def _releaseLock():
+KeyboardInterrupt: 
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1131, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/queues.py", line 116, in get
+    return _ForkingPickler.loads(res)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/multiprocessing/reductions.py", line 496, in rebuild_storage_fd
+    fd = df.detach()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/resource_sharer.py", line 57, in detach
+    with _resource_sharer.get_connection(self._id) as conn:
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/resource_sharer.py", line 87, in get_connection
+    c = Client(address, authkey=process.current_process().authkey)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/connection.py", line 502, in Client
+    c = SocketClient(address)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/connection.py", line 630, in SocketClient
+    s.connect(address)
+FileNotFoundError: [Errno 2] No such file or directory
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 225, in <module>
+    for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 43, in __iter__
+    yield next(self._infinite_iterator)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1327, in _next_data
+    idx, data = self._get_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1293, in _get_data
+    success, data = self._try_get_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1144, in _try_get_data
+    raise RuntimeError(f'DataLoader worker (pid(s) {pids_str}) exited unexpectedly') from e
+RuntimeError: DataLoader worker (pid(s) 2160235, 2160298, 2160299, 2160300) exited unexpectedly
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 276, in <module>
+    auc = misc.auc(algorithm, loader, weights, device)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 249, in auc
+    for x, y, z in loader:
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 249, in auc
+    for x, y, z in loader:
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 276, in <module>
+    auc = misc.auc(algorithm, loader, weights, device)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 276, in <module>
+    auc = misc.auc(algorithm, loader, weights, device)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 276, in <module>
+    auc = misc.auc(algorithm, loader, weights, device)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 276, in auc
+    auc = auc / (len(s_0) * len(s_1))
+ZeroDivisionError: float division by zero
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 224, in <module>
+    minibatches_device = [(x.to(device), y.to(device), z.to(device))
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 224, in <listcomp>
+    minibatches_device = [(x.to(device), y.to(device), z.to(device))
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 108, in <module>
+    raise NotImplementedError
+NotImplementedError
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 181, in <module>
+    algorithm.to(device)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1174, in to
+    return self._apply(convert)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 806, in _apply
+    p_should_use_set_data = compute_should_use_set_data(param, param_applied)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/nn/modules/module.py", line 783, in compute_should_use_set_data
+    if torch._has_compatible_shallow_copy_type(tensor, tensor_applied):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/_utils/signal_handling.py", line 67, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 1264423) is killed by signal: Killed. 
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
