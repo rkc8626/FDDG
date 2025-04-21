@@ -137,6 +137,7 @@ if __name__ == "__main__":
 
     if args.task == "domain_adaptation" and len(uda_splits) == 0:
         raise ValueError("Not enough unlabeled samples for domain adaptation.")
+    print("Hparams: ", hparams)
 
     train_loaders = [InfiniteDataLoader(
         dataset=env,
@@ -284,7 +285,7 @@ if __name__ == "__main__":
                 dps[name + '_dp'] = dp
                 eos[name + '_eo'] = eo
                 aucs[name + '_auc'] = auc
-                
+
                 # Log metrics to TensorBoard
                 metrics_dict = {
                     'accuracy': acc,

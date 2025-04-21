@@ -1,0 +1,61 @@
+Environment:
+	Python: 3.8.15
+	PyTorch: 2.4.1+cu121
+	Torchvision: 0.19.1+cu121
+	CUDA: 12.1
+	CUDNN: 90100
+	NumPy: 1.23.5
+	PIL: 9.4.0
+Args:
+	algorithm: ERM
+	checkpoint_freq: None
+	data_dir: /path/to/data
+	dataset: BDDPerson
+	holdout_fraction: 0.2
+	hparams: {"lr": 5e-05, "batch_size": 32, "weight_decay": 0.0001}
+	hparams_seed: 0
+	output_dir: grid_search_results/ERM_lr_5e-05_bs_32_wd_0.0001
+	save_model_every_checkpoint: False
+	seed: 0
+	skip_model_save: False
+	step: 2
+	steps: None
+	task: domain_generalization
+	test_envs: [0]
+	trial_seed: 0
+	uda_holdout_fraction: 0
+HParams:
+	batch_size: 32
+	class_balanced: False
+	data_augmentation: True
+	lr: 5e-05
+	nonlinear_classifier: False
+	resnet18: False
+	resnet_dropout: 0.0
+	weight_decay: 0.0001
+Hparams:  {'data_augmentation': True, 'resnet18': False, 'resnet_dropout': 0.0, 'class_balanced': False, 'nonlinear_classifier': False, 'lr': 5e-05, 'weight_decay': 0.0001, 'batch_size': 32}
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+env0_in_acc   env0_out_acc  env1_in_acc   env1_out_acc  env2_in_acc   env2_out_acc  epoch         l_cls         loss          step          step_time    
+0.9861351820  0.9826388889  0.9682080925  0.9883720930  0.9663774403  0.9641693811  0.0000000000  0.6391751766  0.6391751766  0             0.8336534500 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
+0.0049305111  0.0012470782  0.0062443018  0.0008799210  0.0010781884  0.0008502603  0.0000000000  0.6391751766  0.6391751766  0             0.8336534500 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             0             0             0.0000000000  0.6391751766  0.6391751766  0             0.8336534500 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             0             0             0.0000000000  0.6391751766  0.6391751766  0             0.8336534500 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
+0.5452893034  0.5121469484  0.5580843490  0.5036065574  0.5086894652  0.5097847080  0.0000000000  0.6391751766  0.6391751766  0             0.8336534500 
+
+0.9861351820  0.9826388889  1.0000000000  0.9883720930  0.9688177874  0.9641693811  46.242774566  0.1124958619  0.1124958619  500           0.0767622209 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
+0.0006110455  0.0003292498  0.0336808711  0.0000235736  0.0015865592  0.0003743111  46.242774566  0.1124958619  0.1124958619  500           0.0767622209 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0.3313763862  0             0.5752186589  0             46.242774566  0.1124958619  0.1124958619  500           0.0767622209 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             1.0000000000  0             0.3857142857  0             46.242774566  0.1124958619  0.1124958619  500           0.0767622209 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
+0.5526329146  0.5740173810  0.5774637759  0.5213114754  0.5483215834  0.5325872908  46.242774566  0.1124958619  0.1124958619  500           0.0767622209 
+
