@@ -1,0 +1,32 @@
+# Grid search results
+fddg/grid_search_results/
+
+# Training output
+fddg/fairness_panel/backend/train_output/
+
+# Frontend npm packages
+fddg/fairness_panel/frontend/node_modules/
+fddg/fairness_panel/frontend/package-lock.json
+
+# Python virtual environments (globally ignored)
+**/.venv/
+**/venv/
+.venv/
+venv/
+newenv/
+
+# Python cache and compiled files (globally ignored)
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE settings
+.vscode/
+.idea/

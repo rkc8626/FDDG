@@ -333,3 +333,48 @@ class ParamDict(OrderedDict):
 
     def __truediv__(self, other):
         return self._prototype(other, operator.truediv)
+
+class BatchSizeAdapter:
+    """Adapter to handle dynamic batch size changes while maintaining data loading progress"""
+    def __init__(self, data_loader, old_batch_size, new_batch_size):
+        self.data_loader = data_loader
+        self.old_batch_size = old_batch_size
+        self.new_batch_size = new_batch_size
+        self.buffer = []
+
+        # Find LCM (Least Common Multiple) of batch sizes to determine alignment point
+        self.lcm = np.lcm(old_batch_size, new_batch_size)
+        self.samples_until_aligned = self.lcm - (len(self.buffer) % self.lcm)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        while len(self.buffer) < self.new_batch_size:
+            try:
+                batch = next(self.data_loader)
+                if isinstance(batch, (tuple, list)):
+                    # Unpack the batch into individual samples
+                    for i in range(len(batch[0])):
+                        self.buffer.append(tuple(t[i:i+1] for t in batch))
+                else:
+                    # Handle single tensor case
+                    for i in range(len(batch)):
+                        self.buffer.append(batch[i:i+1])
+            except StopIteration:
+                if not self.buffer:
+                    raise StopIteration
+
+        # Return a batch of the new size
+        batch = self.buffer[:self.new_batch_size]
+        self.buffer = self.buffer[self.new_batch_size:]
+
+        # Combine individual samples back into a batch
+        if isinstance(batch[0], tuple):
+            return tuple(torch.cat([s[i] for s in batch]) for i in range(len(batch[0])))
+        else:
+            return torch.cat(batch)
+
+    def is_aligned(self):
+        """Check if we've reached a point where both batch sizes align"""
+        return len(self.buffer) % self.lcm == 0

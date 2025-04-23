@@ -23,8 +23,61 @@ from domainbed import hparams_registry
 from domainbed import algorithms
 from domainbed.lib import misc
 from domainbed.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
+from domainbed.lib.batch_size_adapter import BatchSizeAdapter
 
 import tensorboardX
+
+def reinitialize_data_loaders(in_splits, dataset, hparams, test_envs):
+    """Reinitialize data loaders with new hyperparameters"""
+    train_loaders = [InfiniteDataLoader(
+        dataset=env,
+        weights=env_weights,
+        batch_size=hparams['batch_size'],
+        num_workers=dataset.N_WORKERS)
+        for i, (env, env_weights) in enumerate(in_splits)
+        if i not in test_envs]
+    return train_loaders
+
+def check_alignment(adapted_loaders):
+    """Check if all loaders have reached an alignment point"""
+    return all(loader.is_aligned() for loader in adapted_loaders)
+
+def update_hyperparameters(algorithm, hparams, in_splits, dataset, test_envs):
+    """Update hyperparameters and reinitialize necessary components"""
+    old_batch_size = algorithm.hparams.get('batch_size')
+    new_batch_size = hparams.get('batch_size')
+
+    # Reinitialize algorithm with new hyperparameters
+    algorithm = algorithm.reinit_with_new_hparams(hparams)
+
+    if old_batch_size != new_batch_size:
+        # Create new data loaders with the new batch size
+        train_loaders = [InfiniteDataLoader(
+            dataset=env,
+            weights=env_weights,
+            batch_size=new_batch_size,
+            num_workers=dataset.N_WORKERS)
+            for i, (env, env_weights) in enumerate(in_splits)
+            if i not in test_envs]
+
+        # Wrap each loader with the adapter
+        adapted_loaders = [BatchSizeAdapter(iter(loader), old_batch_size, new_batch_size)
+                         for loader in train_loaders]
+
+        # Create new iterator
+        train_minibatches_iterator = zip(*adapted_loaders)
+        return train_minibatches_iterator, adapted_loaders, algorithm
+    else:
+        # If batch size hasn't changed, keep using the existing iterator
+        train_loaders = [InfiniteDataLoader(
+            dataset=env,
+            weights=env_weights,
+            batch_size=hparams['batch_size'],
+            num_workers=dataset.N_WORKERS)
+            for i, (env, env_weights) in enumerate(in_splits)
+            if i not in test_envs]
+        train_minibatches_iterator = zip(*train_loaders)
+        return train_minibatches_iterator, None, algorithm
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Domain generalization')
@@ -139,13 +192,7 @@ if __name__ == "__main__":
         raise ValueError("Not enough unlabeled samples for domain adaptation.")
     print("Hparams: ", hparams)
 
-    train_loaders = [InfiniteDataLoader(
-        dataset=env,
-        weights=env_weights,
-        batch_size=hparams['batch_size'],
-        num_workers=dataset.N_WORKERS)
-        for i, (env, env_weights) in enumerate(in_splits)
-        if i not in args.test_envs]
+    train_minibatches_iterator, adapted_loaders, algorithm = update_hyperparameters(algorithm, hparams, in_splits, dataset, args.test_envs)
 
 
 
@@ -180,8 +227,6 @@ if __name__ == "__main__":
 
     algorithm.to(device)
 
-    train_minibatches_iterator = zip(*train_loaders)
-    uda_minibatches_iterator = zip(*uda_loaders)
     checkpoint_vals = collections.defaultdict(lambda: [])
 
     steps_per_epoch = min([len(env)/hparams['batch_size'] for env,_ in in_splits])
@@ -225,12 +270,25 @@ if __name__ == "__main__":
     last_results_keys = None
     for step in range(start_step, n_steps):
         step_start_time = time.time()
+
+        if adapted_loaders is not None and check_alignment(adapted_loaders):
+            # We've reached an alignment point, switch to regular data loaders
+            train_loaders = [InfiniteDataLoader(
+                dataset=env,
+                weights=env_weights,
+                batch_size=hparams['batch_size'],
+                num_workers=dataset.N_WORKERS)
+                for i, (env, env_weights) in enumerate(in_splits)
+                if i not in test_envs]
+            train_minibatches_iterator = zip(*train_loaders)
+            adapted_loaders = None
+
         # train minibathes train/uda/eval
         minibatches_device = [(x.to(device), y.to(device), z.to(device))
-        for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
+            for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
         if args.task == "domain_adaptation":
             uda_device = [x.to(device)
-                for x,_ in next(uda_minibatches_iterator)]
+                for x,_ in next(train_minibatches_iterator)]
         else:
             uda_device = None
         step_vals = algorithm.update(minibatches_device, uda_device)

@@ -48,9 +48,53 @@ class Algorithm(torch.nn.Module):
     def __init__(self, input_shape, num_classes, num_domains, hparams):
         super(Algorithm, self).__init__()
         self.hparams = hparams
+        self.input_shape = input_shape
+        self.num_classes = num_classes
+        self.num_domains = num_domains
+
+    def save_state(self):
+        """Save algorithm state including network parameters and optimizer state"""
+        state = {}
+        # Save all attributes that are either torch tensors or have state_dict()
+        for key, value in self.__dict__.items():
+            if key not in ['hparams', 'input_shape', 'num_classes', 'num_domains']:
+                if isinstance(value, torch.Tensor):
+                    state[key] = value
+                elif hasattr(value, 'state_dict'):
+                    state[key] = value.state_dict()
+        return state
+
+    def load_state(self, state):
+        """Load algorithm state"""
+        for key, value in state.items():
+            if key in self.__dict__:
+                if isinstance(self.__dict__[key], torch.Tensor):
+                    self.__dict__[key].copy_(value)
+                elif hasattr(self.__dict__[key], 'load_state_dict'):
+                    self.__dict__[key].load_state_dict(value)
+
+    def reinit_with_new_hparams(self, new_hparams):
+        """Reinitialize algorithm with new hyperparameters while preserving training progress"""
+        # Save current state
+        old_state = self.save_state()
+
+        # Get current device
+        device = next(self.parameters()).device
+
+        # Create new instance with updated hparams
+        new_algorithm = self.__class__(
+            self.input_shape,
+            self.num_classes,
+            self.num_domains,
+            new_hparams
+        ).to(device)
+
+        # Load saved state
+        new_algorithm.load_state(old_state)
+
+        return new_algorithm
 
     def update(self, minibatches, unlabeled=None):
-
         raise NotImplementedError
 
     def predict(self, x):
@@ -74,7 +118,7 @@ class ERM(Algorithm):
         self.network = torch.nn.Sequential(self.featurizer, self.classifier)
 
         # Initialize loss attributes
-        self.loss = 0.0 
+        self.loss = 0.0
         self.l_cls = 0.0  # classification loss
         self.l_inv = 0.0  # invariance loss (not used in ERM but needed for logging)
         self.l_fair = 0.0  # fairness loss (not used in ERM but needed for logging)
