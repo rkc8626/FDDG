@@ -4,7 +4,6 @@ import subprocess
 import signal
 import time
 from threading import Thread
-from utils import load_json_atomic, file_lock, update_json_atomic
 import threading
 import queue
 from typing import Dict, Any, Optional
@@ -52,24 +51,44 @@ class TrainingController:
             args.webapp_mode = True
             args.step = 2
 
-        # Initialize training manager in webapp mode
-        args.webapp_mode = True  # Ensure webapp mode is set
-        self.training_manager = train_main(args)
-
-        # Add initial log message
-        self.training_manager.add_log(f"Training manager initialized with:")
-        self.training_manager.add_log(f"- Dataset: {args.dataset}")
-        self.training_manager.add_log(f"- Algorithm: {args.algorithm}")
-        self.training_manager.add_log(f"- Test environments: {args.test_envs}")
-        self.training_manager.add_log(f"- Initial batch size: {hparams.get('batch_size', 32)}")
-        self.training_manager.add_log(f"- Initial learning rate: {hparams.get('lr', 0.001)}")
-        self.training_manager.add_log("Ready to start training. Click 'Start' to begin.")
+        # Initialize shared state and lock BEFORE training manager
+        self.state_lock = threading.Lock()
+        self.shared_state = {
+            'step': 0,
+            'running': False,
+            'hparams': hparams.copy(),
+            'stdout': [],
+            'metrics': {}
+        }
 
         self.current_config = {
             'running': False,
             'batch_size': hparams.get('batch_size', 32),
             'learning_rate': hparams.get('lr', 0.001)
         }
+
+        # Store the training manager instance that will be set by app.py
+        self.training_manager = None
+
+        self.tensorboard_dir = os.path.join(args.output_dir, "logs", "tensorboard")
+        self.last_event_file = None
+        self.last_step = 0
+
+    def set_training_manager(self, manager):
+        """Set the training manager instance and initialize it"""
+        self.training_manager = manager
+        self.training_manager.set_controller(self)
+
+        # Add initial log message
+        self.training_manager.add_output("\nTraining manager initialized with:")
+        self.training_manager.add_output("=" * 50)
+        self.training_manager.add_output(f"Dataset: {self.training_manager.args.dataset}")
+        self.training_manager.add_output(f"Algorithm: {self.training_manager.args.algorithm}")
+        self.training_manager.add_output(f"Test environments: {self.training_manager.args.test_envs}")
+        self.training_manager.add_output(f"Initial batch size: {self.training_manager.hparams.get('batch_size', 32)}")
+        self.training_manager.add_output(f"Initial learning rate: {self.training_manager.hparams.get('lr', 0.001)}")
+        self.training_manager.add_output("Ready to start training. Click 'Start' to begin.")
+        self.training_manager.add_output("=" * 50)
 
     def start(self):
         """Start the training process"""
@@ -111,28 +130,51 @@ class TrainingController:
 
         self.current_config.update(config)
 
+    def update_shared_state(self, updates):
+        """Thread-safe update of the shared state and store update for debugging"""
+        with self.state_lock:
+            # Update the shared state with new values
+            for key, value in updates.items():
+                if key == 'stdout' and isinstance(value, str):
+                    self.shared_state['stdout'].append(value)
+                    # Print stdout for debugging evaluation
+                    print(value)
+                else:
+                    self.shared_state[key] = value
+                    if key == 'metrics':
+                        print("\nMetrics Update:")
+                        print("-" * 30)
+                        for metric_name, metric_data in value.items():
+                            if metric_data:  # Only print if there's data
+                                print(f"{metric_name}: {metric_data[-1]}")  # Print latest value
+                        print("-" * 30)
+
     def get_state(self) -> Dict[str, Any]:
-        """Get current state"""
+        """Get current state including metrics"""
         try:
-            while True:
-                state = self.training_manager.state_queue.get_nowait()
-                latest_state = state
-        except queue.Empty:
-            latest_state = {
-                'step': self.training_manager.current_step,
-                'running': self.training_manager.running,
-                'hparams': self.training_manager.hparams,
-                'metrics': {},  # Ensure metrics key exists
-                'stdout': '\n'.join(self.training_manager.training_logs)  # Include logs even when queue is empty
+            # Get a thread-safe copy of the current state
+            with self.state_lock:
+                state_copy = {
+                    'step': self.shared_state['step'],
+                    'running': self.shared_state['running'],
+                    'hparams': self.shared_state['hparams'].copy(),
+                    # 'stdout': '\n'.join(self.shared_state['stdout']),
+                    'metrics': self.shared_state.get('metrics', {})
+                }
+
+            # Add current configuration
+            state_copy['batch_size'] = self.current_config['batch_size']
+            state_copy['learning_rate'] = self.current_config['learning_rate']
+
+            return state_copy
+
+        except Exception as e:
+            print(f"Error getting state: {str(e)}")
+            return {
+                'step': 0,
+                'running': False,
+                'hparams': {},
+                'stdout': f"Error: {str(e)}",
+                'metrics': {}
             }
-
-        # Add current configuration
-        latest_state['batch_size'] = self.current_config['batch_size']
-        latest_state['learning_rate'] = self.current_config['learning_rate']
-
-        # Ensure stdout exists in state
-        if 'stdout' not in latest_state:
-            latest_state['stdout'] = '\n'.join(self.training_manager.training_logs)
-
-        return latest_state
 

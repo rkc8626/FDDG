@@ -8,7 +8,11 @@ import argparse
 from threading import Thread
 from train_controller import TrainingController
 from domainbed import algorithms, datasets, hparams_registry
+from domainbed.scripts.train_with_panel import main as train_main
 import torch
+from tensorboard.backend.event_processing import event_file_loader
+import glob
+import tensorflow as tf
 
 app = Flask(__name__)
 # Configure CORS properly for both REST and WebSocket
@@ -37,8 +41,10 @@ socketio = SocketIO(
 
 # Global training controller instance
 training_controller = None
+output_dir = "train_output"
 
 def parse_args():
+    global output_dir
     """Parse command line arguments similar to vanilla train script"""
     parser = argparse.ArgumentParser(description='Domain generalization with web monitoring')
     parser.add_argument('--data_dir', type=str, default="./domainbed/data/")
@@ -81,95 +87,74 @@ def parse_args():
     elif args.test_envs is None:
         args.test_envs = [0]
 
+    # Convert output_dir to absolute path
+    args.output_dir = os.path.abspath(args.output_dir)
+    # Create output directory if it doesn't exist
+    os.makedirs(args.output_dir, exist_ok=True)
+    # Create logs directory for TensorBoard
+    os.makedirs(os.path.join(args.output_dir, "logs", "tensorboard"), exist_ok=True)
+    output_dir = args.output_dir
     return args
 
 def initialize_training(args):
     """Initialize the training controller with provided settings"""
     global training_controller
 
-    # Get hyperparameters
-    if args.hparams_seed == 0:
-        hparams = hparams_registry.default_hparams(args.algorithm, args.dataset, args.test_envs, args.step)
-    else:
-        hparams = hparams_registry.random_hparams(args.algorithm, args.dataset,
-            misc.seed_hash(args.hparams_seed, args.trial_seed), args.test_envs)
-    if args.hparams:
-        hparams.update(json.loads(args.hparams))
-
-    # Initialize dataset
-    dataset = vars(datasets)[args.dataset](args.data_dir, args.test_envs, hparams)
-
-    # Initialize algorithm
-    algorithm_class = algorithms.get_algorithm_class(args.algorithm)
-    algorithm = algorithm_class(dataset.input_shape, dataset.num_classes,
-        len(dataset) - len(args.test_envs), hparams)
-
-    if torch.cuda.is_available():
-        algorithm = algorithm.cuda()
-
-    # Create controller with output directory for TensorBoard logs
-    output_dir = os.path.abspath(args.output_dir)
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Add webapp_mode to args
+    # Add webapp mode to args
     args.webapp_mode = True
+    args.save_model_every_checkpoint = False
+    args.uda_holdout_fraction = 0
+    args.task = "domain_generalization"
 
-    training_controller = TrainingController(algorithm, dataset, hparams, args.test_envs, args=args)
+    # Use train_main to properly initialize everything
+    training_manager = train_main(args)
+
+    # Create training controller with the properly initialized components
+    training_controller = TrainingController(
+        algorithm=training_manager.algorithm,
+        dataset=training_manager.dataset,
+        hparams=training_manager.hparams,
+        test_envs=args.test_envs,
+        args=args
+    )
+
+    # Set the training manager in the controller
+    training_controller.set_training_manager(training_manager)
+
+    print("\nTraining initialization completed:")
+    print(f"Dataset: {args.dataset}")
+    print(f"Algorithm: {args.algorithm}")
+    print(f"Test environments: {args.test_envs}")
+    print(f"Batch size: {training_manager.hparams['batch_size']}")
+    print(f"Learning rate: {training_manager.hparams['lr']}")
 
 def monitor_training_state():
     """Monitor training state and emit updates via socketio"""
     global training_controller
+    previous_state = None
 
     while True:
         if training_controller:
             try:
-                state = training_controller.get_state()
+                current_state = training_controller.get_state()
 
-                # Format metrics for frontend
-                metrics = {}
-                if 'metrics' in state:
-                    raw_metrics = state['metrics']
-
-                    # Group metrics by type
-                    for key, value in raw_metrics.items():
-                        if isinstance(value, (int, float)):
-                            # Determine metric group based on prefix
-                            if key.startswith('env'):
-                                if '_acc' in key:
-                                    group = 'performance'
-                                elif '_md' in key:
-                                    group = 'fairness'
-                                elif '_dp' in key:
-                                    group = 'bias'
-                                elif '_eo' in key:
-                                    group = 'fairness'
-                                elif '_auc' in key:
-                                    group = 'performance'
-                                else:
-                                    group = 'others'
-                            else:
-                                group = 'raw'
-
-                            if group not in metrics:
-                                metrics[group] = {}
-                            metrics[group][key] = value
-
-                socketio.emit('state_update', {
-                    'state': state,
-                    'config': {
-                        'running': state['running'],
-                        'batch_size': state['hparams'].get('batch_size'),
-                        'learning_rate': state['hparams'].get('lr')
-                    }
-                })
-
-                if metrics:
-                    socketio.emit('scalar_update', metrics)
+                # Only emit if state has changed
+                if previous_state != current_state:
+                    # Send state update with just training state
+                    socketio.emit('state_update', {
+                        'state': current_state,
+                        'config': {
+                            'running': current_state['running'],
+                            'batch_size': current_state['hparams'].get('batch_size'),
+                            'learning_rate': current_state['hparams'].get('lr')
+                        }
+                    })
+                    previous_state = current_state
 
             except Exception as e:
                 print(f"Error in state monitoring: {e}")
 
-        time.sleep(1)
+        time.sleep(4)
 
 @socketio.on('update_config')
 def handle_config_update(new_config):
@@ -199,6 +184,7 @@ def handle_state_request():
     try:
         if training_controller:
             state = training_controller.get_state()
+            del state['metrics']
             emit('state_update', {
                 'state': state,
                 'config': {
@@ -210,42 +196,175 @@ def handle_state_request():
     except Exception as e:
         emit('state_error', {'message': str(e)})
 
+def get_tensorboard_metrics(output_dir):
+    """Read metrics from the TensorBoard event files in the correct directory"""
+    # Use the same directory structure as in TrainingManager
+    tensorboard_dir = os.path.join(output_dir, "logs", "tensorboard")
+    print(f"Looking for TensorBoard files in: {tensorboard_dir}")
+
+    # Check if directory exists
+    if not os.path.exists(tensorboard_dir):
+        print(f"TensorBoard directory does not exist: {tensorboard_dir}")
+        return {}
+
+    # Find all event files in the directory (not recursively, as the writer writes directly to this dir)
+    event_files = glob.glob(os.path.join(tensorboard_dir, "events.out.tfevents.*"))
+    print(f"Found {len(event_files)} event files: {event_files}")
+
+    if not event_files:
+        print("No event files found")
+        return {}
+
+    # Use only the latest event file based on creation time
+    latest_event_file = max(event_files, key=os.path.getctime)
+    print(f"Using latest event file: {latest_event_file}")
+
+    metrics = {}
+    event_count = 0
+
+    # Process the latest event file
+    try:
+        # Use TensorFlow's summary iterator to read the events
+        for summary in tf.compat.v1.train.summary_iterator(latest_event_file):
+            for value in summary.summary.value:
+                # Handle different value types
+                if hasattr(value, 'simple_value'):
+                    tag = value.tag
+                    if tag not in metrics:
+                        metrics[tag] = []
+
+                    metrics[tag].append({
+                        'step': summary.step,
+                        'value': value.simple_value
+                    })
+                    event_count += 1
+                    if event_count % 100 == 0:
+                        print(f"Processed {event_count} events so far")
+    except Exception as e:
+        print(f"Error reading event file {latest_event_file}: {str(e)}")
+
+    # Sort metrics by step
+    for tag in metrics:
+        metrics[tag].sort(key=lambda x: x['step'])
+
+    print(f"Successfully loaded {len(metrics)} metrics with {event_count} total events")
+    if metrics:
+        print(f"Sample metrics: {list(metrics.keys())[:5]}")
+    return metrics
+
 @app.route("/scalars", methods=["GET"])
 def get_scalars():
-    """Get current scalar metrics"""
+    """Get current scalar metrics directly from the training controller state"""
     global training_controller
+    print("\nFetching scalars directly from training controller")
 
-    if training_controller:
+    if not training_controller:
+        print("Training controller not initialized")
+        return jsonify({})
+
+    try:
+        # Get the current state from the training controller
         state = training_controller.get_state()
+
+        # Extract metrics from the state
         metrics = state.get('metrics', {})
 
-        # Group metrics by type
-        grouped_metrics = {}
-        for key, value in metrics.items():
-            if isinstance(value, (int, float)):
-                # Determine metric group based on prefix
-                if key.startswith('env'):
-                    if '_acc' in key:
-                        group = 'performance'
-                    elif '_md' in key:
-                        group = 'fairness'
-                    elif '_dp' in key:
-                        group = 'bias'
-                    elif '_eo' in key:
-                        group = 'fairness'
-                    elif '_auc' in key:
-                        group = 'performance'
-                    else:
-                        group = 'others'
-                else:
-                    group = 'raw'
+        if not metrics:
+            print("No metrics found in training controller state")
+            return jsonify({})
 
-                if group not in grouped_metrics:
-                    grouped_metrics[group] = {}
-                grouped_metrics[group][key] = value
+        print(f"Found {len(metrics)} metrics in training controller state")
+
+        # Group metrics by type
+        grouped_metrics = {
+            'performance': {},  # acc, auc
+            'fairness': {},     # md, eo
+            'bias': {},         # dp
+            'training': {},     # loss, l_cls, step_time
+            'progress': {}      # step, epoch
+        }
+
+        # Initialize radar data
+        radar_data = {
+            'is_radar': True,
+            'values': {}
+        }
+
+        for key, values in metrics.items():
+            if isinstance(values, list) and values:
+                # Determine which group this metric belongs to
+                if key in ['acc', 'auc']:
+                    group = 'performance'
+                elif key in ['md', 'eo']:
+                    group = 'fairness'
+                elif key == 'dp':
+                    group = 'bias'
+                elif key in ['loss', 'l_cls', 'step_time']:
+                    group = 'training'
+                elif key in ['step', 'epoch']:
+                    group = 'progress'
+                else:
+                    continue  # Skip unknown metrics
+
+                # Add to appropriate group
+                grouped_metrics[group][key] = values
+
+                # Add to radar data if it's a metric we want to show
+                if key in ['acc', 'auc', 'md', 'dp', 'eo']:
+                    # Get the latest value
+                    latest_value = values[-1]['value'] if values else 0
+
+                    # Normalize the value based on metric type
+                    if key in ['acc', 'auc']:
+                        # These are already in 0-1 range
+                        normalized_value = latest_value
+                    elif key == 'md':
+                        # Max difference: 0 is best, 1 is worst
+                        # We want to invert it so 1 is best
+                        normalized_value = 1 - min(latest_value, 1)
+                    elif key == 'dp':
+                        # Demographic parity: 1 is best, 0 is worst
+                        normalized_value = latest_value
+                    elif key == 'eo':
+                        # Equalized odds: 1 is best, 0 is worst
+                        normalized_value = latest_value
+
+                    radar_data['values'][key] = [{
+                        'step': values[-1]['step'],
+                        'value': normalized_value
+                    }]
+
+        # Add radar data to the response
+        grouped_metrics['radar'] = radar_data
 
         return jsonify(grouped_metrics)
-    return jsonify({})
+
+    except Exception as e:
+        print(f"Error getting metrics from training controller: {str(e)}")
+        return jsonify({"error": str(e)})
+
+@app.route("/representations", methods=["GET"])
+def get_representations():
+    """Get t-SNE visualization of training data representations"""
+    global training_controller
+    print("\nFetching training representations")
+
+    if not training_controller or not training_controller.training_manager:
+        print("Training controller not initialized")
+        return jsonify({})
+
+    try:
+        # Get representations from training manager
+        visualization_data = training_controller.training_manager.get_training_representations()
+
+        if visualization_data is None:
+            return jsonify({"error": "No training data available"})
+
+        return jsonify(visualization_data)
+
+    except Exception as e:
+        print(f"Error getting training representations: {str(e)}")
+        return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
     # Parse command line arguments

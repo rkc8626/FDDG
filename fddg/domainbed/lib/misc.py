@@ -151,12 +151,14 @@ def md(algorithm, loader, weights, device):
             s_0 += temp_s_0
             s_1 += temp_s_1
 
-    # Add safety checks for division by zero
+    # Handle cases where we have no samples from one of the groups
     if s_0 == 0 or s_1 == 0:
-        # Return a large value to indicate an invalid calculation
-        # or you could return None or raise a custom exception
-        return float('inf')
+        # If we have no samples from one group, we can't compute the metric
+        # Return 1.0 to indicate maximum possible difference
+        # This is a reasonable default since we can't compute the actual difference
+        return 1.0
 
+    # Compute the difference in positive rates between groups
     result = abs((y_1_s_0/s_0) - (y_1_s_1/s_1))
     return result.item()
 

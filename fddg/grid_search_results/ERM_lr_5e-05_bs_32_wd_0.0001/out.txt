@@ -38,174 +38,242 @@ Hparams:  {'data_augmentation': True, 'resnet18': False, 'resnet_dropout': 0.0, 
   warnings.warn(
 /blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
   warnings.warn(msg)
-env0_in_acc   env0_out_acc  env1_in_acc   env1_out_acc  env2_in_acc   env2_out_acc  epoch         l_cls         loss          step          step_time    
-0.9861351820  0.9826388889  0.9682080925  0.9883720930  0.9663774403  0.9641693811  0.0000000000  0.6391751766  0.6391751766  0             0.7287776470 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0049305111  0.0012470782  0.0062443018  0.0008799210  0.0010781884  0.0008502603  0.0000000000  0.6391751766  0.6391751766  0             0.7287776470 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             0             0             0.0000000000  0.6391751766  0.6391751766  0             0.7287776470 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             0             0             0.0000000000  0.6391751766  0.6391751766  0             0.7287776470 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5452893034  0.5121469484  0.5580843490  0.5036065574  0.5086894652  0.5097847080  0.0000000000  0.6391751766  0.6391751766  0             0.7287776470 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+env0_in_acc   env0_out_acc  env1_in_acc   env1_out_acc  epoch         l_cls         loss          step          step_time    
+0.9905660377  0.9904761905  0.9792207792  0.9826689775  0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
 
-0.9861351820  0.9826388889  1.0000000000  0.9883720930  0.9688177874  0.9641693811  46.242774566  0.1124958619  0.1124958619  500           0.0764868884 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0006110455  0.0003292498  0.0336808711  0.0000235736  0.0015865592  0.0003743111  46.242774566  0.1124958619  0.1124958619  500           0.0764868884 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.5752186589  0             46.242774566  0.1124958619  0.1124958619  500           0.0764868884 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.3857142857  0             46.242774566  0.1124958619  0.1124958619  500           0.0764868884 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5526329146  0.5740173810  0.5774637759  0.5213114754  0.5483215834  0.5325872908  46.242774566  0.1124958619  0.1124958619  500           0.0764868884 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9882075472  0.9904761905  0.9805194805  0.9826689775  37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
 
-0.9844020797  0.9826388889  1.0000000000  0.9883720930  0.9831887202  0.9641693811  92.485549132  0.0363921472  0.0363921472  1000          0.0765053649 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0006607808  0.0034540738  0.0370882303  0.0017555451  0.0066055581  0.0046222620  92.485549132  0.0363921472  0.0363921472  1000          0.0765053649 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.8692346680  0             92.485549132  0.0363921472  0.0363921472  1000          0.0765053649 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.7963133641  0             92.485549132  0.0363921472  0.0363921472  1000          0.0765053649 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5438142368  0.5595496741  0.5900478194  0.5383606557  0.5314970764  0.5039384988  92.485549132  0.0363921472  0.0363921472  1000          0.0765053649 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9813852814  0.9826689775  75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
 
-0.9861351820  0.9826388889  1.0000000000  0.9883720930  0.9848156182  0.9641693811  138.72832369  0.0346151911  0.0346151911  1500          0.0765966444 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0005833343  0.0024845668  0.0320480466  0.0000485869  0.0080327429  0.0043943650  138.72832369  0.0346151911  0.0346151911  1500          0.0765966444 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.7844312858  0             138.72832369  0.0346151911  0.0346151911  1500          0.0765966444 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.8375510204  0             138.72832369  0.0346151911  0.0346151911  1500          0.0765966444 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5500031722  0.5890282441  0.6138855931  0.5363934426  0.5590125588  0.5149445202  138.72832369  0.0346151911  0.0346151911  1500          0.0765966444 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9978354978  0.9826689775  113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
 
-0.9757365685  0.9756944444  1.0000000000  0.9883720930  0.9981019523  0.9565689468  184.97109826  0.0103058504  0.0103058504  2000          0.0766466942 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0079129022  0.0096771605  0.0367852412  0.0014629326  0.0152166225  0.0006265249  184.97109826  0.0103058504  0.0103058504  2000          0.0766466942 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0.6253521127  0.7349397590  0.3313763862  0             0.6460527938  0.7361963190  184.97109826  0.0103058504  0.0103058504  2000          0.0766466942 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.9814814815  0             184.97109826  0.0103058504  0.0103058504  2000          0.0766466942 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5304212663  0.6010764369  0.5801603567  0.5298360656  0.5503696403  0.5358914641  184.97109826  0.0103058504  0.0103058504  2000          0.0766466942 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9978354978  0.9826689775  150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
 
-0.9861351820  0.9791666667  1.0000000000  0.9883720930  0.9981019523  0.9630836048  231.21387283  0.0073808314  0.0073808314  2500          0.0768329616 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0000400176  0.0046486724  0.0368152261  0.0008470424  0.0157345198  0.0057965447  231.21387283  0.0073808314  0.0073808314  2500          0.0768329616 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6084642676  0             231.21387283  0.0073808314  0.0073808314  2500          0.0768329616 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.9205582394  0             231.21387283  0.0073808314  0.0073808314  2500          0.0768329616 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5045806370  0.5352557772  0.6051127171  0.5344262295  0.5399691757  0.5049041884  231.21387283  0.0073808314  0.0073808314  2500          0.0768329616 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9882075472  0.9904761905  1.0000000000  0.9809358752  188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
 
-0.9835355286  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9587404995  277.45664739  0.0077095827  0.0077095827  3000          0.0770012150 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0060262280  0.0011847788  0.0368367061  0.0001412244  0.0135675222  0.0068702875  277.45664739  0.0077095827  0.0077095827  3000          0.0770012150 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.3234126984  277.45664739  0.0077095827  0.0077095827  3000          0.0770012150 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.9411764706  277.45664739  0.0077095827  0.0077095827  3000          0.0770012150 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5566330415  0.5818190796  0.5781828641  0.5278688525  0.5558219639  0.5294961372  277.45664739  0.0077095827  0.0077095827  3000          0.0770012150 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  1.0000000000  0.9826689775  226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
 
-0.9852686308  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9609120521  323.69942196  0.0000974414  0.0000974414  3500          0.0767997365 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0026771335  0.0028436459  0.0368494540  0.0000016562  0.0134410225  0.0042006415  323.69942196  0.0000974414  0.0000974414  3500          0.0767997365 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.8489583333  323.69942196  0.0000974414  0.0000974414  3500          0.0767997365 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.9411764706  323.69942196  0.0000974414  0.0000974414  3500          0.0767997365 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5550247431  0.5883369544  0.5862006975  0.5619672131  0.5540511187  0.5261730289  323.69942196  0.0000974414  0.0000974414  3500          0.0767997365 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  1.0000000000  0.9826689775  264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
 
-0.9844020797  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9619978284  369.94219653  0.0000106191  0.0000106191  4000          0.0768713655 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0025546011  0.0030018075  0.0368511751  0.0000011634  0.0134479310  0.0038409075  369.94219653  0.0000106191  0.0000106191  4000          0.0768713655 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.6791666667  369.94219653  0.0000106191  0.0000106191  4000          0.0768713655 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.4705882353  369.94219653  0.0000106191  0.0000106191  4000          0.0768713655 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5552690014  0.5866087300  0.5850501564  0.5573770492  0.5538188282  0.5262345679  369.94219653  0.0000106191  0.0000106191  4000          0.0768713655 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  1.0000000000  0.9826689775  301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
 
-0.9861351820  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9609120521  416.18497109  0.0000065144  0.0000065144  4500          0.0768043160 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0019047320  0.0034582431  0.0368523262  0.0000003050  0.0134458933  0.0038495059  416.18497109  0.0000065144  0.0000065144  4500          0.0768043160 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.8489583333  416.18497109  0.0000065144  0.0000065144  4500          0.0768043160 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.9411764706  416.18497109  0.0000065144  0.0000065144  4500          0.0768043160 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5567091740  0.5851273948  0.5854816093  0.5514754098  0.5540277714  0.5269162312  416.18497109  0.0000065144  0.0000065144  4500          0.0768043160 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9882075472  0.9904761905  1.0000000000  0.9809358752  339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
 
-0.9861351820  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9609120521  462.42774566  0.0000040534  0.0000040534  5000          0.0769633470 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0016782074  0.0033717654  0.0368527547  0.0000002283  0.0134481248  0.0034133922  462.42774566  0.0000040534  0.0000040534  5000          0.0769633470 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.8489583333  462.42774566  0.0000040534  0.0000040534  5000          0.0769633470 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.9411764706  462.42774566  0.0000040534  0.0000040534  5000          0.0769633470 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5581461743  0.5830041477  0.5868838313  0.5521311475  0.5550659856  0.5272286602  462.42774566  0.0000040534  0.0000040534  5000          0.0769633470 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9858490566  0.9904761905  1.0000000000  0.9809358752  377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
 
-0.9861351820  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9609120521  508.67052023  0.0000038788  0.0000038788  5500          0.0768511667 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0016492315  0.0024549519  0.0368529111  0.0000003115  0.0134497918  0.0029801056  508.67052023  0.0000038788  0.0000038788  5500          0.0768511667 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.8489583333  508.67052023  0.0000038788  0.0000038788  5500          0.0768511667 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.9411764706  508.67052023  0.0000038788  0.0000038788  5500          0.0768511667 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5589487375  0.5800908552  0.5882860533  0.5514754098  0.5549492493  0.5271055821  508.67052023  0.0000038788  0.0000038788  5500          0.0768511667 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9858490566  0.9904761905  1.0000000000  0.9809358752  415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
 
-0.9861351820  0.9791666667  1.0000000000  0.9883720930  1.0000000000  0.9609120521  554.91329479  0.0000043594  0.0000043594  6000          0.0767331219 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0012242863  0.0026150844  0.0368527099  0.0000002065  0.0134474281  0.0026008738  554.91329479  0.0000043594  0.0000043594  6000          0.0767331219 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6705524582  0.7546296296  554.91329479  0.0000043594  0.0000043594  6000          0.0767331219 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0             554.91329479  0.0000043594  0.0000043594  6000          0.0767331219 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5589645984  0.5750049378  0.5904792723  0.5534426230  0.5547462168  0.5271434522  554.91329479  0.0000043594  0.0000043594  6000          0.0767331219 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9858490566  0.9904761905  1.0000000000  0.9809358752  452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
 
-0.9835355286  0.9756944444  1.0000000000  0.9883720930  1.0000000000  0.9598262758  601.15606936  0.0000050137  0.0000050137  6500          0.0767419930 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0026796898  0.0008945051  0.0368530378  0.0000005963  0.0134500153  0.0012695361  601.15606936  0.0000050137  0.0000050137  6500          0.0767419930 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0.3126760563  0.7349397590  0.3313763862  0             0.6705524582  0.6791666667  601.15606936  0.0000050137  0.0000050137  6500          0.0767419930 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             1.0000000000  0.9411764706  601.15606936  0.0000050137  0.0000050137  6500          0.0767419930 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5581081081  0.5678451511  0.5923848560  0.5567213115  0.5533164189  0.5261493600  601.15606936  0.0000050137  0.0000050137  6500          0.0767419930 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9792207792  0.9826689775  490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
 
-0.9861351820  0.9826388889  0.9682080925  0.9883720930  0.9663774403  0.9641693811  647.39884393  0.0226989529  0.0226989529  7000          0.0769183846 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0003028270  0.0039420426  0.0028313957  0.0037718248  0.0012723953  0.0008345395  647.39884393  0.0226989529  0.0226989529  7000          0.0769183846 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             0             0             647.39884393  0.0226989529  0.0226989529  7000          0.0769183846 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             0             0             647.39884393  0.0226989529  0.0226989529  7000          0.0769183846 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5050691537  0.6061623543  0.5624348326  0.5875409836  0.5254581161  0.5137279406  647.39884393  0.0226989529  0.0226989529  7000          0.0769183846 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9792207792  0.9826689775  528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
 
-0.9835355286  0.9826388889  1.0000000000  0.9883720930  0.9821041215  0.9641693811  693.64161849  0.0782191124  0.0782191124  7500          0.0769634438 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0021274714  0.0019204693  0.0369243138  0.0007067785  0.0096336529  0.0003879461  693.64161849  0.0782191124  0.0782191124  7500          0.0769634438 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.5712113533  0.8834355828  693.64161849  0.0782191124  0.0782191124  7500          0.0769634438 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.8518518519  0             693.64161849  0.0782191124  0.0782191124  7500          0.0769634438 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5288478619  0.5361939562  0.6129148240  0.5881967213  0.5260447529  0.5087101416  693.64161849  0.0782191124  0.0782191124  7500          0.0769634438 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9792207792  0.9826689775  566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
 
-0.9861351820  0.9826388889  1.0000000000  0.9883720930  0.9896963124  0.9652551574  739.88439306  0.0181711751  0.0181711751  8000          0.0768034987 
-env0_in_md    env0_out_md   env1_in_md    env1_out_md   env2_in_md    env2_out_md   epoch         l_cls         loss          step          step_time    
-0.0000166024  0.0005945819  0.0368634313  0.0000051248  0.0106493365  0.0016708381  739.88439306  0.0181711751  0.0181711751  8000          0.0768034987 
-env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   env2_in_dp    env2_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0.3313763862  0             0.6258489610  0             739.88439306  0.0181711751  0.0181711751  8000          0.0768034987 
-env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   env2_in_eo    env2_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             1.0000000000  0             0.9333333333  0             739.88439306  0.0181711751  0.0181711751  8000          0.0768034987 
-env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  env2_in_auc   env2_out_auc  epoch         l_cls         loss          step          step_time    
-0.5561508692  0.5466620581  0.6071621184  0.5993442623  0.5555305664  0.5438347345  739.88439306  0.0181711751  0.0181711751  8000          0.0768034987 
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+WARNING:root:NaN or Inf found in input tensor.
+0.9905660377  0.9904761905  0.9792207792  0.9826689775  603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
+inf           inf           inf           inf           603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
+0             0             0             0             603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
+0             0             0             0             603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
 

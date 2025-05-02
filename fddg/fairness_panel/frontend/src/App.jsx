@@ -40,7 +40,7 @@ import {
   Filler,
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { Line, Radar } from "react-chartjs-2";
+import { Line, Radar, Scatter } from "react-chartjs-2";
 import { LazyLog } from "react-lazylog";
 import { io } from 'socket.io-client';
 
@@ -354,9 +354,115 @@ function groupMetricsByPrefix(scalars) {
   return scalars;
 }
 
-// Create a new MetricsTabs component
+// Add new component for t-SNE visualization
+function TrainingVisualization({ data }) {
+  if (!data || !data.points) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>No training data available</Typography>
+      </Box>
+    );
+  }
+
+  // Prepare data for scatter plot
+  const datasets = [];
+  const markers = ['circle', 'triangle', 'rect', 'star'];
+  const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
+
+  // Group points by environment and sensitive attribute
+  const groupedData = {};
+  data.points.forEach((point, i) => {
+    const env = data.environments[i];
+    const sensitive = data.sensitive[i];
+    const key = `${env}-${sensitive}`;
+
+    if (!groupedData[key]) {
+      groupedData[key] = {
+        points: [],
+        env,
+        sensitive
+      };
+    }
+    groupedData[key].points.push(point);
+  });
+
+  // Create datasets for each group
+  Object.values(groupedData).forEach((group, i) => {
+    datasets.push({
+      label: `Env ${group.env} (S=${group.sensitive})`,
+      data: group.points,
+      backgroundColor: colors[group.env % colors.length],
+      pointStyle: markers[group.sensitive % markers.length],
+      pointRadius: 5,
+      pointHoverRadius: 7
+    });
+  });
+
+  const chartData = {
+    datasets
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        title: {
+          display: true,
+          text: 't-SNE 1'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 't-SNE 2'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Training Data Representations'
+      }
+    }
+  };
+
+  return (
+    <Box sx={{ height: 400, width: '100%' }}>
+      <Scatter data={chartData} options={options} />
+    </Box>
+  );
+}
+
+// Modify MetricsTabs to include the visualization
 function MetricsTabs({ scalars, getChartOptions }) {
   const [currentTab, setCurrentTab] = useState(0);
+  const [visualizationData, setVisualizationData] = useState(null);
+
+  // Fetch visualization data periodically
+  useEffect(() => {
+    const fetchVisualization = async () => {
+      try {
+        const response = await fetch('http://localhost:5100/representations');
+        const data = await response.json();
+        if (!data.error) {
+          setVisualizationData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching visualization data:', error);
+      }
+    };
+
+    fetchVisualization();
+    const interval = setInterval(fetchVisualization, 5000); // Update every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   const groups = Object.keys(scalars).filter(group => group !== 'radar');
 
   const handleTabChange = (event, newValue) => {
@@ -579,6 +685,14 @@ function MetricsTabs({ scalars, getChartOptions }) {
     <Box sx={{ width: '100%' }}>
       {/* Always show radar chart at the top */}
       {renderRadarChart()}
+
+      {/* Add training visualization */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+          Training Data Visualization
+        </Typography>
+        <TrainingVisualization data={visualizationData} />
+      </Box>
 
       <Tabs
         value={currentTab}
@@ -871,8 +985,8 @@ export default function MainApp() {
                   Configs
                 </Typography>
 
-                {/* Current Config as table */}
-                <TableContainer sx={{ maxHeight: 'none' }}>  {/* Remove max height */}
+                {/* Current Config as table - only show non-metric settings */}
+                <TableContainer sx={{ maxHeight: 'none' }}>
                   <Table size="small">
                     <TableHead>
                       <TableRow>
@@ -883,7 +997,16 @@ export default function MainApp() {
                     </TableHead>
                     <TableBody>
                       {trainingState && Object.entries(trainingState)
-                        .filter(([key]) => key !== 'stdout')
+                        .filter(([key]) =>
+                          // Only show non-metric settings
+                          !key.includes('_acc') &&
+                          !key.includes('_md') &&
+                          !key.includes('_dp') &&
+                          !key.includes('_eo') &&
+                          !key.includes('_auc') &&
+                          key !== 'stdout' &&
+                          key !== 'metrics'
+                        )
                         .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
                         .map(([key, value]) => (
                           <TableRow key={key}>
