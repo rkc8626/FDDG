@@ -38,242 +38,174 @@ Hparams:  {'data_augmentation': True, 'resnet18': False, 'resnet_dropout': 0.0, 
   warnings.warn(
 /blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
   warnings.warn(msg)
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
 env0_in_acc   env0_out_acc  env1_in_acc   env1_out_acc  epoch         l_cls         loss          step          step_time    
-0.9905660377  0.9904761905  0.9792207792  0.9826689775  0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+0.4793388430  0.4976303318  0.5203473945  0.5163853029  0.0000000000  0.7266672254  0.7266672254  0             17.876550912 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  0.0000000000  0.7266672254  0.7266672254  0             17.876550912 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+0             0             0             0             0.0000000000  0.7266672254  0.7266672254  0             17.876550912 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+0             0             0             0             0.0000000000  0.7266672254  0.7266672254  0             17.876550912 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  0.0000000000  0.6805835366  0.6805835366  0             1.4155077934 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  0.0000000000  0.7266672254  0.7266672254  0             17.876550912 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9882075472  0.9904761905  0.9805194805  0.9826689775  37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+0.5053128689  0.4881516588  0.6362282878  0.6206554121  18.890200708  0.6676731050  0.6676731050  500           0.0456807666 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  18.890200708  0.6676731050  0.6676731050  500           0.0456807666 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+0             0             0             0             18.890200708  0.6676731050  0.6676731050  500           0.0456807666 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+0             0             0             0             18.890200708  0.6676731050  0.6676731050  500           0.0456807666 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  37.735849056  0.0958525423  0.0958525423  500           0.0503255758 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  18.890200708  0.6676731050  0.6676731050  500           0.0456807666 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9813852814  0.9826689775  75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+0.5135773318  0.5071090047  0.6786600496  0.6107249255  37.780401416  0.6366429501  0.6366429501  1000          0.0444799318 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  37.780401416  0.6366429501  0.6366429501  1000          0.0444799318 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+0             0             0             0             37.780401416  0.6366429501  0.6366429501  1000          0.0444799318 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+0             0             0             0             37.780401416  0.6366429501  0.6366429501  1000          0.0444799318 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  75.471698113  0.0823382922  0.0823382922  1000          0.0422265205 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  37.780401416  0.6366429501  0.6366429501  1000          0.0444799318 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9978354978  0.9826689775  113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+0.5064935065  0.5023696682  0.6697270471  0.5799404171  56.670602125  0.5435345050  0.5435345050  1500          0.0439766626 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  56.670602125  0.5435345050  0.5435345050  1500          0.0439766626 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+0             0             0             0             56.670602125  0.5435345050  0.5435345050  1500          0.0439766626 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+0             0             0             0             56.670602125  0.5435345050  0.5435345050  1500          0.0439766626 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  113.20754716  0.0451020937  0.0451020937  1500          0.0425593195 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  56.670602125  0.5435345050  0.5435345050  1500          0.0439766626 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9978354978  0.9826689775  150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+0.5230224321  0.5545023697  0.9550868486  0.5620655412  75.560802833  0.2782398768  0.2782398768  2000          0.0438229032 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  75.560802833  0.2782398768  0.2782398768  2000          0.0438229032 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+0             0             0             0             75.560802833  0.2782398768  0.2782398768  2000          0.0438229032 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+0             0             0             0             75.560802833  0.2782398768  0.2782398768  2000          0.0438229032 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  150.94339622  0.0207818643  0.0207818643  2000          0.0422947717 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  75.560802833  0.2782398768  0.2782398768  2000          0.0438229032 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9882075472  0.9904761905  1.0000000000  0.9809358752  188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+0.5005903188  0.5308056872  0.9739454094  0.5362462761  94.451003541  0.0843734774  0.0843734774  2500          0.0443078284 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  94.451003541  0.0843734774  0.0843734774  2500          0.0443078284 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+0             0             0             0             94.451003541  0.0843734774  0.0843734774  2500          0.0443078284 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+0             0             0             0             94.451003541  0.0843734774  0.0843734774  2500          0.0443078284 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  188.67924528  0.0032268390  0.0032268390  2500          0.0423530917 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  94.451003541  0.0843734774  0.0843734774  2500          0.0443078284 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  1.0000000000  0.9826689775  226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+0.5206611570  0.5213270142  0.9905707196  0.5600794439  113.34120425  0.0455455334  0.0455455334  3000          0.0440142913 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  113.34120425  0.0455455334  0.0455455334  3000          0.0440142913 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+0             0             0             0             113.34120425  0.0455455334  0.0455455334  3000          0.0440142913 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+0             0             0             0             113.34120425  0.0455455334  0.0455455334  3000          0.0440142913 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  226.41509433  0.0000092642  0.0000092642  3000          0.0422772355 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  113.34120425  0.0455455334  0.0455455334  3000          0.0440142913 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  1.0000000000  0.9826689775  264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+0.5218417946  0.5402843602  0.9990074442  0.5680238332  132.23140495  0.0239803501  0.0239803501  3500          0.0446644235 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  132.23140495  0.0239803501  0.0239803501  3500          0.0446644235 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+0             0             0             0             132.23140495  0.0239803501  0.0239803501  3500          0.0446644235 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+0             0             0             0             132.23140495  0.0239803501  0.0239803501  3500          0.0446644235 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  264.15094339  0.0000051708  0.0000051708  3500          0.0422061634 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  132.23140495  0.0239803501  0.0239803501  3500          0.0446644235 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  1.0000000000  0.9826689775  301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+0.5053128689  0.4786729858  0.9930521092  0.5501489573  151.12160566  0.0308617859  0.0308617859  4000          0.0436291008 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  151.12160566  0.0308617859  0.0308617859  4000          0.0436291008 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+0             0             0             0             151.12160566  0.0308617859  0.0308617859  4000          0.0436291008 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+0             0             0             0             151.12160566  0.0308617859  0.0308617859  4000          0.0436291008 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  301.88679245  0.0000038468  0.0000038468  4000          0.0422822089 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  151.12160566  0.0308617859  0.0308617859  4000          0.0436291008 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9882075472  0.9904761905  1.0000000000  0.9809358752  339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+0.5100354191  0.4739336493  0.9992555831  0.5422045680  170.01180637  0.0216825004  0.0216825004  4500          0.0447092590 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  170.01180637  0.0216825004  0.0216825004  4500          0.0447092590 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+0             0             0             0             170.01180637  0.0216825004  0.0216825004  4500          0.0447092590 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+0             0             0             0             170.01180637  0.0216825004  0.0216825004  4500          0.0447092590 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  339.62264150  0.0000028805  0.0000028805  4500          0.0435623951 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  170.01180637  0.0216825004  0.0216825004  4500          0.0447092590 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9858490566  0.9904761905  1.0000000000  0.9809358752  377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+0.5182998819  0.4834123223  1.0000000000  0.5769612711  188.90200708  0.0099924780  0.0099924780  5000          0.0440216293 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  188.90200708  0.0099924780  0.0099924780  5000          0.0440216293 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+0             0             0             0             188.90200708  0.0099924780  0.0099924780  5000          0.0440216293 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+0             0             0             0             188.90200708  0.0099924780  0.0099924780  5000          0.0440216293 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  377.35849056  0.0000028375  0.0000028375  5000          0.0424368734 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  188.90200708  0.0099924780  0.0099924780  5000          0.0440216293 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9858490566  0.9904761905  1.0000000000  0.9809358752  415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+0.5053128689  0.4502369668  1.0000000000  0.5729890765  207.79220779  0.0000499221  0.0000499221  5500          0.0446782937 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  207.79220779  0.0000499221  0.0000499221  5500          0.0446782937 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+0             0             0             0             207.79220779  0.0000499221  0.0000499221  5500          0.0446782937 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+0             0             0             0             207.79220779  0.0000499221  0.0000499221  5500          0.0446782937 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  415.09433962  0.0000031009  0.0000031009  5500          0.0423292627 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  207.79220779  0.0000499221  0.0000499221  5500          0.0446782937 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9858490566  0.9904761905  1.0000000000  0.9809358752  452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+0.5112160567  0.4597156398  1.0000000000  0.5779543198  226.68240850  0.0000084959  0.0000084959  6000          0.0446109591 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  226.68240850  0.0000084959  0.0000084959  6000          0.0446109591 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+0             0             0             0             226.68240850  0.0000084959  0.0000084959  6000          0.0446109591 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+0             0             0             0             226.68240850  0.0000084959  0.0000084959  6000          0.0446109591 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  452.83018867  0.0000035942  0.0000035942  6000          0.0424190221 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  226.68240850  0.0000084959  0.0000084959  6000          0.0446109591 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9792207792  0.9826689775  490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+0.5112160567  0.4644549763  1.0000000000  0.5710029791  245.57260920  0.0000063125  0.0000063125  6500          0.0455521693 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  245.57260920  0.0000063125  0.0000063125  6500          0.0455521693 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+0             0             0             0             245.57260920  0.0000063125  0.0000063125  6500          0.0455521693 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+0             0             0             0             245.57260920  0.0000063125  0.0000063125  6500          0.0455521693 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  490.56603773  0.0605591448  0.0605591448  6500          0.0500536776 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  245.57260920  0.0000063125  0.0000063125  6500          0.0455521693 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9792207792  0.9826689775  528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+0.5088547816  0.4739336493  1.0000000000  0.5779543198  264.46280991  0.0000060054  0.0000060054  7000          0.0442706761 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  264.46280991  0.0000060054  0.0000060054  7000          0.0442706761 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+0             0             0             0             264.46280991  0.0000060054  0.0000060054  7000          0.0442706761 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+0             0             0             0             264.46280991  0.0000060054  0.0000060054  7000          0.0442706761 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  528.30188679  0.0983335869  0.0983335869  7000          0.0436399693 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  264.46280991  0.0000060054  0.0000060054  7000          0.0442706761 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9792207792  0.9826689775  566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+0.5076741440  0.4834123223  1.0000000000  0.5710029791  283.35301062  0.0000057568  0.0000057568  7500          0.0462764583 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  283.35301062  0.0000057568  0.0000057568  7500          0.0462764583 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+0             0             0             0             283.35301062  0.0000057568  0.0000057568  7500          0.0462764583 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+0             0             0             0             283.35301062  0.0000057568  0.0000057568  7500          0.0462764583 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  566.03773584  0.1029483786  0.1029483786  7500          0.0424469151 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  283.35301062  0.0000057568  0.0000057568  7500          0.0462764583 
 
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-WARNING:root:NaN or Inf found in input tensor.
-0.9905660377  0.9904761905  0.9792207792  0.9826689775  603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+0.5123966942  0.4739336493  1.0000000000  0.5700099305  302.24321133  0.0000058301  0.0000058301  8000          0.0456720581 
 env0_in_md    env0_out_md   env1_in_md    env1_out_md   epoch         l_cls         loss          step          step_time    
-inf           inf           inf           inf           603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+1.0000000000  1.0000000000  1.0000000000  1.0000000000  302.24321133  0.0000058301  0.0000058301  8000          0.0456720581 
 env0_in_dp    env0_out_dp   env1_in_dp    env1_out_dp   epoch         l_cls         loss          step          step_time    
-0             0             0             0             603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+0             0             0             0             302.24321133  0.0000058301  0.0000058301  8000          0.0456720581 
 env0_in_eo    env0_out_eo   env1_in_eo    env1_out_eo   epoch         l_cls         loss          step          step_time    
-0             0             0             0             603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+0             0             0             0             302.24321133  0.0000058301  0.0000058301  8000          0.0456720581 
 env0_in_auc   env0_out_auc  env1_in_auc   env1_out_auc  epoch         l_cls         loss          step          step_time    
-0.5000000000  0.5000000000  0.5000000000  0.5000000000  603.77358490  0.1032431257  0.1032431257  8000          0.0432454028 
+0.5000000000  0.5000000000  0.5000000000  0.5000000000  302.24321133  0.0000058301  0.0000058301  8000          0.0456720581 
 

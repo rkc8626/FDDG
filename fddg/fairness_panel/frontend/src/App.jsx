@@ -23,6 +23,10 @@ import {
   Modal,
   Tabs,
   Tab,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -355,94 +359,296 @@ function groupMetricsByPrefix(scalars) {
 }
 
 // Add new component for t-SNE visualization
-function TrainingVisualization({ data }) {
-  if (!data || !data.points) {
+function TrainingVisualization({ data, sensitiveColorMap }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [processedData, setProcessedData] = useState(null);
+  const [colorMode, setColorMode] = useState('sensitive'); // Only declare this ONCE
+
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      if (!data) {
+        setError("No data available");
+        setIsLoading(false);
+        return;
+      }
+      if (!data.points || !Array.isArray(data.points) || data.points.length === 0) {
+        setError("No points data available");
+        setIsLoading(false);
+        return;
+      }
+      if (!data.sensitive || data.sensitive.length !== data.points.length) {
+        setError("Invalid data format: mismatched array lengths");
+        setIsLoading(false);
+        return;
+      }
+
+      // Color and shape palettes
+      const colorList = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8BC34A', '#E91E63', '#00BCD4', '#CDDC39'
+      ];
+      const markerList = ['circle', 'triangle', 'rect', 'star', 'cross', 'rectRounded', 'rectRot', 'dash', 'line'];
+
+      let groupValues, groupKey, groupSet, groupGuide, datasets;
+      if (colorMode === 'sensitive') {
+        groupValues = data.sensitive;
+        groupSet = data.sensitive_set || Array.from(new Set(data.sensitive));
+        groupKey = 'Sensitive';
+        groupGuide = data.tsne_fairness_guide || {};
+        datasets = groupSet.map((group, idx) => ({
+          label: `${groupKey} ${group}`,
+          data: data.points.filter((_, i) => groupValues[i] === group),
+          backgroundColor: colorList[idx % colorList.length],
+          pointStyle: 'circle',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          parsing: false,
+          normalized: true
+        }));
+      } else if (colorMode === 'label') {
+        groupValues = data.labels;
+        groupSet = data.labels_set || Array.from(new Set(data.labels));
+        groupKey = 'Label';
+        groupGuide = {};
+        data.labels_set?.forEach(lab => { groupGuide[lab] = data.labels.filter(l => l === lab).length; });
+        datasets = groupSet.map((group, idx) => ({
+          label: `${groupKey} ${group}`,
+          data: data.points.filter((_, i) => groupValues[i] === group),
+          backgroundColor: colorList[idx % colorList.length],
+          pointStyle: 'circle',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          parsing: false,
+          normalized: true
+        }));
+      } else if (colorMode === 'environment') {
+        groupValues = data.environments;
+        groupSet = Array.from(new Set(data.environments));
+        groupKey = 'Env';
+        groupGuide = {};
+        groupSet.forEach(env => { groupGuide[env] = data.environments.filter(e => e === env).length; });
+        datasets = groupSet.map((group, idx) => ({
+          label: `${groupKey} ${group}`,
+          data: data.points.filter((_, i) => groupValues[i] === group),
+          backgroundColor: colorList[idx % colorList.length],
+          pointStyle: 'circle',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          parsing: false,
+          normalized: true
+        }));
+      } else if (colorMode === 'class_sensitive') {
+        // Dual encoding: color by predicted class, shape by sensitive
+        const predLabels = data.predicted_labels && data.predicted_labels.length === data.points.length
+          ? data.predicted_labels
+          : data.labels;
+        const classSet = data.predicted_labels_set && data.predicted_labels_set.length > 0
+          ? data.predicted_labels_set
+          : (data.labels_set || Array.from(new Set(predLabels)));
+        const sensSet = data.sensitive_set || Array.from(new Set(data.sensitive));
+        groupKey = 'PredClass+Sensitive';
+        groupGuide = {};
+        datasets = [];
+        classSet.forEach((cls, cidx) => {
+          sensSet.forEach((sens, sidx) => {
+            const points = data.points.filter((_, i) => predLabels[i] === cls && data.sensitive[i] === sens);
+            if (points.length > 0) {
+              const label = `Class ${cls}, Sensitive ${sens}`;
+              groupGuide[label] = points.length;
+              datasets.push({
+                label,
+                data: points,
+                backgroundColor: colorList[cidx % colorList.length],
+                pointStyle: markerList[sidx % markerList.length],
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                parsing: false,
+                normalized: true
+              });
+            }
+          });
+        });
+      }
+
+      setProcessedData({ datasets, groupKey, groupGuide, colorMode });
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.message || "Error processing visualization data");
+      setIsLoading(false);
+    }
+  }, [data, sensitiveColorMap, colorMode]);
+
+  if (isLoading) {
     return (
-      <Box sx={{ p: 2 }}>
-        <Typography>No training data available</Typography>
+      <Box sx={{ p: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', height: 400 }}>
+        <Typography color="error" gutterBottom>
+          {error}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          The visualization will automatically update when data becomes available.
+        </Typography>
+      </Box>
+    );
+  }
+  if (!processedData || !processedData.datasets || processedData.datasets.length === 0) {
+    return (
+      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', height: 400 }}>
+        <Typography variant="body1" gutterBottom>
+          No visualization data available
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Please wait for the training to generate enough data points.
+        </Typography>
       </Box>
     );
   }
 
-  // Prepare data for scatter plot
-  const datasets = [];
-  const markers = ['circle', 'triangle', 'rect', 'star'];
-  const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
-
-  // Group points by environment and sensitive attribute
-  const groupedData = {};
-  data.points.forEach((point, i) => {
-    const env = data.environments[i];
-    const sensitive = data.sensitive[i];
-    const key = `${env}-${sensitive}`;
-
-    if (!groupedData[key]) {
-      groupedData[key] = {
-        points: [],
-        env,
-        sensitive
-      };
-    }
-    groupedData[key].points.push(point);
-  });
-
-  // Create datasets for each group
-  Object.values(groupedData).forEach((group, i) => {
-    datasets.push({
-      label: `Env ${group.env} (S=${group.sensitive})`,
-      data: group.points,
-      backgroundColor: colors[group.env % colors.length],
-      pointStyle: markers[group.sensitive % markers.length],
-      pointRadius: 5,
-      pointHoverRadius: 7
-    });
-  });
-
-  const chartData = {
-    datasets
-  };
-
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    animation: false,
+    elements: {
+      point: { hoverRadius: 5, hoverBorderWidth: 0 }
+    },
     scales: {
       x: {
         type: 'linear',
         position: 'bottom',
-        title: {
-          display: true,
-          text: 't-SNE 1'
-        }
+        title: { display: true, text: 't-SNE 1 (arbitrary units)' },
+        ticks: { maxTicksLimit: 10 }
       },
       y: {
-        title: {
-          display: true,
-          text: 't-SNE 2'
-        }
+        title: { display: true, text: 't-SNE 2 (arbitrary units)' },
+        ticks: { maxTicksLimit: 10 }
       }
     },
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Training Data Representations'
+      legend: { position: 'top' },
+      title: { display: true, text: `t-SNE: Representation by ${processedData.groupKey}` },
+      tooltip: {
+        enabled: true,
+        mode: 'nearest',
+        intersect: false,
+        position: 'nearest',
+        callbacks: {
+          label: function(context) {
+            const point = context.raw;
+            const dataset = context.dataset;
+            const idx = context.dataIndex;
+            let origIdx = -1;
+            // For class+sens, try to find the original index
+            if (processedData.colorMode === 'class_sensitive') {
+              for (let i = 0, count = 0; i < data.points.length; ++i) {
+                if (
+                  `Class ${data.labels[i]}, Sensitive ${data.sensitive[i]}` === dataset.label &&
+                  count === idx
+                ) {
+                  origIdx = i;
+                  break;
+                }
+                if (`Class ${data.labels[i]}, Sensitive ${data.sensitive[i]}` === dataset.label) {
+                  count++;
+                }
+              }
+            } else {
+              for (let i = 0, count = 0; i < data.points.length; ++i) {
+                if (
+                  String(dataset.label).endsWith(String(processedData.groupKey + ' ' + (data[processedData.groupKey.toLowerCase() + 's']?.[i] ?? '')))
+                  && count === idx
+                ) {
+                  origIdx = i;
+                  break;
+                }
+                if (
+                  String(dataset.label).endsWith(String(processedData.groupKey + ' ' + (data[processedData.groupKey.toLowerCase() + 's']?.[i] ?? '')))
+                ) {
+                  count++;
+                }
+              }
+            }
+            return [
+              processedData.colorMode === 'class_sensitive'
+                ? `Predicted: ${data.predicted_labels?.[origIdx] ?? data.labels?.[origIdx]}, Sensitive: ${data.sensitive?.[origIdx]}`
+                : `${processedData.groupKey}: ${dataset.label.replace(processedData.groupKey + ' ', '')}`,
+              `True Label: ${data.labels?.[origIdx]}`,
+              `Sensitive: ${data.sensitive?.[origIdx]}`,
+              `Env: ${data.environments?.[origIdx]}`,
+              `Position: (${(point?.x || 0).toFixed(2)}, ${(point?.y || 0).toFixed(2)})`
+            ];
+          }
+        }
       }
-    }
+    },
+    devicePixelRatio: 1,
+    interaction: { mode: 'nearest', axis: 'xy', intersect: false }
   };
 
+  // Custom legend for groups
+  const legend = (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1, mb: 2 }}>
+      {processedData.datasets.map(ds => (
+        <Box key={ds.label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ width: 16, height: 16, backgroundColor: ds.backgroundColor, borderRadius: ds.pointStyle === 'circle' ? '50%' : '0', border: ds.pointStyle !== 'circle' ? '2px solid #333' : 'none', display: 'inline-block' }} />
+          <Typography variant="body2">{ds.label} ({processedData.groupGuide?.[ds.label] || ds.data.length}) {processedData.colorMode === 'class_sensitive' ? ` [${ds.pointStyle}]` : ''}</Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+
+  // Dropdown for color mode
+  const colorModeSelector = (
+    <FormControl size="small" sx={{ minWidth: 180, mb: 1 }}>
+      <InputLabel id="color-mode-label">Color By</InputLabel>
+      <Select
+        labelId="color-mode-label"
+        id="color-mode-select"
+        value={colorMode}
+        label="Color By"
+        onChange={e => setColorMode(e.target.value)}
+      >
+        <MenuItem value="sensitive">Sensitive Attribute</MenuItem>
+        <MenuItem value="label">Class Label</MenuItem>
+        <MenuItem value="environment">Environment</MenuItem>
+        <MenuItem value="class_sensitive">Class + Sensitive</MenuItem>
+      </Select>
+    </FormControl>
+  );
+
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
-      <Scatter data={chartData} options={options} />
+    <Box sx={{ height: 440, width: '100%', position: 'relative', mb: 12, pb: 3 }}>
+      {colorModeSelector}
+      {legend}
+      <Scatter
+        data={processedData}
+        options={options}
+        fallbackContent={
+          <Typography>
+            Unable to render visualization. Please try refreshing the page.
+          </Typography>
+        }
+      />
+      <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+        Note: t-SNE axes are arbitrary. Only the relative position and grouping of points is meaningful.
+      </Typography>
     </Box>
   );
 }
 
 // Modify MetricsTabs to include the visualization
-function MetricsTabs({ scalars, getChartOptions }) {
+function MetricsTabs({ scalars, getChartOptions, trainingState }) {
   const [currentTab, setCurrentTab] = useState(0);
   const [visualizationData, setVisualizationData] = useState(null);
+  const prevRunningRef = useRef(false);
 
   // Fetch visualization data periodically
   useEffect(() => {
@@ -457,11 +663,18 @@ function MetricsTabs({ scalars, getChartOptions }) {
         console.error('Error fetching visualization data:', error);
       }
     };
-
     fetchVisualization();
-    const interval = setInterval(fetchVisualization, 5000); // Update every 5 seconds
+    const interval = setInterval(fetchVisualization, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Clear t-SNE data when training starts
+  useEffect(() => {
+    if (trainingState?.running && !prevRunningRef.current) {
+      setVisualizationData(null);
+    }
+    prevRunningRef.current = trainingState?.running;
+  }, [trainingState?.running]);
 
   const groups = Object.keys(scalars).filter(group => group !== 'radar');
 
@@ -956,7 +1169,7 @@ export default function MainApp() {
                   <CircularProgress />
                 </Box>
               ) : (
-                <MetricsTabs scalars={scalars} getChartOptions={getChartOptions} />
+                <MetricsTabs scalars={scalars} getChartOptions={getChartOptions} trainingState={trainingState} />
               )}
             </Paper>
           </Box>

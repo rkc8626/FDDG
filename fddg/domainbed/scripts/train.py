@@ -107,21 +107,32 @@ if __name__ == "__main__":
     else:
         raise NotImplementedError
 
+    # Debugging dataset splitting
+    print("\nDebugging dataset splitting:")
+    print(f"Dataset type: {type(dataset)}")
+    print(f"Number of environments: {len(dataset)}")
+    print(f"Test environments: {args.test_envs}")
+    print(f"Holdout fraction: {args.holdout_fraction}")
 
     in_splits = []
     out_splits = []
     uda_splits = []
     for env_i, env in enumerate(dataset):
         uda = []
+        print(f"\nProcessing environment {env_i}:")
+        print(f"Environment size: {len(env)}")
 
         out, in_ = misc.split_dataset(env,
             int(len(env)*args.holdout_fraction),
             misc.seed_hash(args.trial_seed, env_i))
 
+        print(f"Split sizes - in: {len(in_)}, out: {len(out)}")
+
         if env_i in args.test_envs:
             uda, in_ = misc.split_dataset(in_,
                 int(len(in_)*args.uda_holdout_fraction),
                 misc.seed_hash(args.trial_seed, env_i))
+            print(f"Test env split - in: {len(in_)}, uda: {len(uda)}")
 
         if hparams['class_balanced']:
             in_weights = misc.make_weights_for_balanced_classes(in_)
@@ -135,6 +146,11 @@ if __name__ == "__main__":
         if len(uda):
             uda_splits.append((uda, uda_weights))
 
+    print("\nFinal split sizes:")
+    print(f"In splits: {[len(x[0]) for x in in_splits]}")
+    print(f"Out splits: {[len(x[0]) for x in out_splits]}")
+    print(f"UDA splits: {[len(x[0]) for x in uda_splits]}")
+
     if args.task == "domain_adaptation" and len(uda_splits) == 0:
         raise ValueError("Not enough unlabeled samples for domain adaptation.")
     print("Hparams: ", hparams)
@@ -146,8 +162,6 @@ if __name__ == "__main__":
         num_workers=dataset.N_WORKERS)
         for i, (env, env_weights) in enumerate(in_splits)
         if i not in args.test_envs]
-
-
 
     uda_loaders = [InfiniteDataLoader(
         dataset=env,

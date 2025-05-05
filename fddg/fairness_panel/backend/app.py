@@ -335,6 +335,13 @@ def get_scalars():
                     }]
 
         # Add radar data to the response
+        # Add an 'ideal' reference for radar chart (all metrics = 1.0)
+        if radar_data['values']:
+            latest_step = max(v[0]['step'] for v in radar_data['values'].values() if v)
+            radar_data['ideal'] = [
+                {'metric': k, 'step': latest_step, 'value': 1.0}
+                for k in radar_data['values'].keys()
+            ]
         grouped_metrics['radar'] = radar_data
 
         return jsonify(grouped_metrics)
@@ -354,17 +361,59 @@ def get_representations():
         return jsonify({})
 
     try:
-        # Get representations from training manager
-        visualization_data = training_controller.training_manager.get_training_representations()
+        # Get raw computation results from training manager
+        raw_data = training_controller.training_manager.get_training_representations()
 
-        if visualization_data is None:
+        if raw_data is None:
             return jsonify({"error": "No training data available"})
 
-        return jsonify(visualization_data)
+        # Validate raw data structure
+        if 'points' not in raw_data or 'metadata' not in raw_data:
+            print("Missing required keys in raw data")
+            return jsonify({"error": "Invalid data format"})
+
+        metadata = raw_data['metadata']
+        points = raw_data['points']
+
+        # Format data for visualization
+        try:
+            visualization_data = {
+                'points': [{'x': float(x), 'y': float(y)} for x, y in points],
+                'labels': metadata['labels'].tolist(),
+                'sensitive': metadata['sensitive'].tolist(),
+                'environments': metadata['environments'],
+                'step': training_controller.training_manager.current_step,
+                'env_sizes': metadata['env_sizes'],
+                # Add unique sets for legend creation
+                'labels_set': list(sorted(set(metadata['labels'].tolist()))),
+                'sensitive_set': list(sorted(set(metadata['sensitive'].tolist()))),
+                # Add a fairness guide: count of points per sensitive group
+                'tsne_fairness_guide': {
+                    str(group): int((metadata['sensitive'] == group).sum())
+                    for group in set(metadata['sensitive'].tolist())
+                },
+                # Add predicted labels for class+senstive visualization
+                'predicted_labels': metadata.get('predicted_labels', []).tolist() if 'predicted_labels' in metadata else [],
+                'predicted_labels_set': list(sorted(set(metadata['predicted_labels'].tolist()))) if 'predicted_labels' in metadata and len(metadata['predicted_labels']) > 0 else []
+            }
+
+            # Log environment distribution
+            print("\nEnvironment distribution:")
+            for env_idx, size in metadata['env_sizes'].items():
+                print(f"Environment {env_idx}: {size} samples")
+
+            print(f"\nSuccessfully formatted {len(points)} data points for visualization")
+            return jsonify(visualization_data)
+
+        except Exception as format_error:
+            error_msg = f"Error formatting data: {str(format_error)}"
+            print(error_msg)
+            return jsonify({"error": error_msg})
 
     except Exception as e:
-        print(f"Error getting training representations: {str(e)}")
-        return jsonify({"error": str(e)})
+        error_msg = f"Error getting training representations: {str(e)}"
+        print(error_msg)
+        return jsonify({"error": error_msg})
 
 if __name__ == "__main__":
     # Parse command line arguments

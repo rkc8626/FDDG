@@ -4,6 +4,8 @@ import json
 import os
 from subprocess import run
 import numpy as np
+from tqdm import tqdm
+import torch
 
 def get_base_param_grid():
     """Base hyperparameters for grid search"""
@@ -108,6 +110,12 @@ def run_experiment(args, algorithm, hparams):
     return metrics
 
 def main():
+    # Check GPU availability
+    if torch.cuda.is_available():
+        print(f"GPU is available: {torch.cuda.get_device_name(0)}")
+    else:
+        print("GPU is NOT available. Running on CPU.")
+
     parser = argparse.ArgumentParser(description='Grid search for ERM variants')
     parser.add_argument('--data_dir', type=str, required=True,
                         help='Path to data directory')
@@ -129,14 +137,14 @@ def main():
     all_results = []
 
     # Run experiments for each algorithm
-    for algorithm in args.algorithms:
+    for algorithm in tqdm(args.algorithms, desc="Algorithms"):
         print(f"\n=== Running experiments for {algorithm} ===")
 
         # Get parameter combinations for this algorithm
         param_combinations = get_param_combinations(algorithm)
 
         # Run experiments for each parameter combination
-        for hparams in param_combinations:
+        for hparams in tqdm(param_combinations, desc=f"{algorithm} parameters", leave=False):
             print(f"\nRunning {algorithm} with parameters:")
             print(f"  lr: {hparams['lr']}")
             print(f"  batch_size: {hparams['batch_size']}")

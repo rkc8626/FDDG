@@ -158,7 +158,7 @@ class TrainingController:
                     'step': self.shared_state['step'],
                     'running': self.shared_state['running'],
                     'hparams': self.shared_state['hparams'].copy(),
-                    # 'stdout': '\n'.join(self.shared_state['stdout']),
+                    'stdout': '\n'.join(self.shared_state.get('stdout', [])),
                     'metrics': self.shared_state.get('metrics', {})
                 }
 

@@ -570,3 +570,71 @@ Traceback (most recent call last):
   File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/algorithms.py", line 112, in update
     return {'loss': self.loss.item(), 'l_cls': self.l_cls.item()}
 KeyboardInterrupt
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 279, in <module>
+    
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 250, in auc
+    for x, y, z in loader:
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 69, in __iter__
+    yield next(self._infinite_iterator)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1327, in _next_data
+    idx, data = self._get_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1293, in _get_data
+    success, data = self._try_get_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1131, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/queues.py", line 116, in get
+    return _ForkingPickler.loads(res)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/multiprocessing/reductions.py", line 496, in rebuild_storage_fd
+    fd = df.detach()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/resource_sharer.py", line 58, in detach
+    return reduction.recv_handle(conn)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/reduction.py", line 189, in recv_handle
+    return recvfds(s, 1)[0]
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/reduction.py", line 157, in recvfds
+    msg, ancdata, flags, addr = sock.recvmsg(1, socket.CMSG_SPACE(bytes_size))
+KeyboardInterrupt
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Traceback (most recent call last):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/scripts/train.py", line 292, in <module>
+    eo = misc.eo(algorithm, loader, weights, device)
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/misc.py", line 212, in eo
+    for x, y, z in loader:
+  File "/orange/ufdatastudios/chenz1/FDDG/fddg/domainbed/lib/fast_data_loader.py", line 69, in __iter__
+    yield next(self._infinite_iterator)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1327, in _next_data
+    idx, data = self._get_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1293, in _get_data
+    success, data = self._try_get_data()
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1131, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/queues.py", line 107, in get
+    if not self._poll(timeout):
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/connection.py", line 257, in poll
+    return self._poll(timeout)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/connection.py", line 424, in _poll
+    r = wait([self], timeout)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/multiprocessing/connection.py", line 931, in wait
+    ready = selector.select(timeout)
+  File "/blue/ufdatastudios/chenz1/.conda/envs/fddg2/lib/python3.8/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt

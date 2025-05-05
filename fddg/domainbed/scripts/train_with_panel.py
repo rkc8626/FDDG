@@ -62,6 +62,14 @@ class TrainingManager:
         print(f"Initializing TensorBoard writer at: {tensorboard_dir}")
         self.train_writer = tensorboardX.SummaryWriter(tensorboard_dir)
 
+        # Compute t-SNE representations during initialization
+        print("\nComputing initial t-SNE visualization...")
+        self._cached_representations = self._compute_tsne_representations()
+        if self._cached_representations is not None:
+            print("Successfully computed initial t-SNE visualization")
+        else:
+            print("Failed to compute initial t-SNE visualization")
+
     def set_controller(self, controller):
         """Set the controller reference for state updates"""
         self.controller = controller
@@ -272,6 +280,8 @@ class TrainingManager:
 
     def webapp_training_loop(self):
         """Training loop for web app mode"""
+        # Clear t-SNE before training starts
+        self._cached_representations = None
         self.add_output("\nStarting training loop...")
         self.add_output("=" * 50)
         self.add_output(f"Total steps per epoch: {self.steps_per_epoch}")
@@ -290,7 +300,8 @@ class TrainingManager:
                 'step': self.current_step,
                 'running': self.running,
                 'hparams': self.hparams,
-                'metrics': all_metrics
+                'metrics': all_metrics,
+                'stdout': self.training_output  # Send initial stdout
             })
 
         while not self._stop_event.is_set():
@@ -308,9 +319,12 @@ class TrainingManager:
                     self.add_output("=" * 50)
                     self.update_hparams(cmd['hparams'])
 
-                    # Update controller with new hparams
+                    # Update controller with new hparams and stdout
                     if self.controller:
-                        self.controller.update_shared_state({'hparams': self.hparams})
+                        self.controller.update_shared_state({
+                            'hparams': self.hparams,
+                            'stdout': self.training_output
+                        })
             except queue.Empty:
                 pass
 
@@ -330,11 +344,12 @@ class TrainingManager:
                     'value': val
                 })
 
-            # Update controller with step (but not metrics or stdout) every step
+            # Update controller with step and stdout every step
             if self.controller:
                 self.controller.update_shared_state({
                     'step': self.current_step,
                     'running': self.running,
+                    'stdout': self.training_output
                 })
 
             # Check if we've reached the target number of steps
@@ -343,17 +358,18 @@ class TrainingManager:
                 self.add_output("Stopping training...")
                 self.running = False
 
-                # Update controller with running state and final metrics
+                # Update controller with running state, final metrics, and stdout
                 if self.controller:
                     self.controller.update_shared_state({
                         'running': False,
-                        'metrics': all_metrics
+                        'metrics': all_metrics,
+                        'stdout': self.training_output
                     })
 
                 break
 
             # Run evaluation and update metrics at checkpoint frequency
-            if (self.current_step % checkpoint_freq == 0) or (self.current_step == n_steps - 1):
+            if (self.current_step == 1) or(self.current_step % checkpoint_freq == 0) or (self.current_step == n_steps - 1):
                 results = self.evaluate()
                 print("Results at step " + str(self.current_step) + ": " + str(results))
 
@@ -371,7 +387,7 @@ class TrainingManager:
                 if self.controller:
                     self.controller.update_shared_state({
                         'metrics': all_metrics,
-                        'stdout': self.training_output[-checkpoint_freq:]  # Only send recent stdout
+                        'stdout': self.training_output
                     })
 
                 # Save results
@@ -388,6 +404,10 @@ class TrainingManager:
 
                 if self.args.save_model_every_checkpoint:
                     self.save_checkpoint(f'model_step{self.current_step}.pkl')
+
+                # Only recompute t-SNE at the end of each epoch
+                if (self.current_step % self.steps_per_epoch == 0) and (self.current_step != 0):
+                    self._cached_representations = self._compute_tsne_representations()
 
         # Save final checkpoint
         self.save_checkpoint('model.pkl')
@@ -423,6 +443,8 @@ class TrainingManager:
         if self.is_webapp_mode:
             raise ValueError("Cannot use train() in webapp mode. Use webapp_training_loop() instead.")
 
+        # Clear t-SNE before training starts
+        self._cached_representations = None
         n_steps = self.args.steps or self.dataset.N_STEPS
         checkpoint_freq = self.args.checkpoint_freq or self.dataset.CHECKPOINT_FREQ
 
@@ -448,68 +470,125 @@ class TrainingManager:
                 if self.args.save_model_every_checkpoint:
                     self.save_checkpoint(f'model_step{step}.pkl')
 
+                # Only recompute t-SNE at the end of each epoch
+                if (self.current_step % self.steps_per_epoch == 0) and (self.current_step != 0):
+                    self._cached_representations = self._compute_tsne_representations()
+
         self.save_checkpoint('model.pkl')
         with open(os.path.join(self.args.output_dir, 'done'), 'w') as f:
             f.write('done')
 
-    def get_training_representations(self):
-        """Get t-SNE visualization of training data representations"""
+    def _compute_tsne_representations(self):
+        """Compute t-SNE visualization of training data representations using GPU with memory-efficient batching.
+
+        Returns a dictionary containing:
+            points: 2D t-SNE coordinates for each sample
+            metadata: Dictionary containing sample information
+        """
+        return self._compute_tsne_cpu()
+
+    def _compute_tsne_cpu(self):
+        """CPU implementation of t-SNE visualization."""
         try:
-            # Collect representations from all training environments
-            all_reps = []
-            all_labels = []
-            all_sensitive = []
-            all_envs = []
+            # Similar structure as GPU version but using numpy
+            features_list = []
+            metadata = {
+                'labels': [],
+                'sensitive': [],
+                'environments': [],
+                'env_sizes': {},
+                'predicted_labels': []
+            }
 
+            print("\nCollecting representations from training environments (CPU):")
             for env_idx, (name, loader, _) in enumerate(zip(self.eval_loader_names, self.eval_loaders, self.eval_weights)):
-                if 'in' in name:  # Only use training data
-                    reps = []
-                    labels = []
-                    sensitive = []
+                if 'in' in name:
+                    print(f"\nProcessing environment {env_idx} ({name}):")
+                    env_features = []
+                    env_labels = []
+                    env_sensitive = []
 
-                    # Get representations from the model
                     with torch.no_grad():
                         for x, y, z in loader:
                             x = x.to(self.device)
-                            # Get representations from the model
-                            rep = self.algorithm.featurizer(x)
-                            reps.append(rep.cpu().numpy())
-                            labels.append(y.cpu().numpy())
-                            sensitive.append(z.cpu().numpy())
+                            features = self.algorithm.featurizer(x)
+                            env_features.append(features.cpu().numpy())
+                            env_labels.append(y.cpu().numpy())
+                            env_sensitive.append(z.cpu().numpy())
+                            # Predict class labels using the model's classifier
+                            logits = self.algorithm.classifier(features)
+                            preds = torch.argmax(logits, dim=1)
+                            metadata['predicted_labels'].append(preds.cpu().numpy())
 
-                    if reps:
-                        all_reps.append(np.concatenate(reps))
-                        all_labels.append(np.concatenate(labels))
-                        all_sensitive.append(np.concatenate(sensitive))
-                        all_envs.extend([env_idx] * len(reps[0]))
+                    if env_features:
+                        # Concatenate environment data
+                        env_features = np.concatenate(env_features)
+                        env_labels = np.concatenate(env_labels)
+                        env_sensitive = np.concatenate(env_sensitive)
+                        env_predicted = np.concatenate(metadata['predicted_labels']) if metadata['predicted_labels'] else None
 
-            if not all_reps:
+                        features_list.append(env_features)
+                        metadata['labels'].append(env_labels)
+                        metadata['sensitive'].append(env_sensitive)
+                        if env_predicted is not None:
+                            metadata['predicted_labels'] = [env_predicted]  # Will be concatenated later
+
+                        env_size = len(env_features)
+                        metadata['environments'].extend([env_idx] * env_size)
+                        metadata['env_sizes'][env_idx] = env_size
+
+                        print(f"  - Environment {env_idx}: {env_size} samples")
+                        print(f"  - Feature dimension: {env_features.shape[1]}")
+
+            if not features_list:
+                print("No representations available")
                 return None
 
-            # Concatenate all representations
-            all_reps = np.concatenate(all_reps)
-            all_labels = np.concatenate(all_labels)
-            all_sensitive = np.concatenate(all_sensitive)
+            # Concatenate all data
+            all_features = np.concatenate(features_list)
+            metadata['labels'] = np.concatenate(metadata['labels'])
+            metadata['sensitive'] = np.concatenate(metadata['sensitive'])
+            if metadata['predicted_labels']:
+                metadata['predicted_labels'] = np.concatenate(metadata['predicted_labels'])
 
-            # Apply t-SNE
+            print("\nComputing t-SNE embedding...")
+            print(f"Total samples: {len(metadata['environments'])}")
+            print(f"Feature dimension: {all_features.shape[1]}")
+            print(f"Number of environments: {len(metadata['env_sizes'])}")
+
+            # Normalize features
+            mean = np.mean(all_features, axis=0)
+            std = np.std(all_features, axis=0)
+            all_features = (all_features - mean) / (std + 1e-8)
+
+            # Compute t-SNE
             from sklearn.manifold import TSNE
             tsne = TSNE(n_components=2, random_state=42)
-            reps_2d = tsne.fit_transform(all_reps)
+            tsne_points = tsne.fit_transform(all_features)
+            metadata['features'] = all_features
 
-            # Prepare data for frontend
-            visualization_data = {
-                'points': reps_2d.tolist(),
-                'labels': all_labels.tolist(),
-                'sensitive': all_sensitive.tolist(),
-                'environments': all_envs,
-                'step': self.current_step
+            print("\nt-SNE computation complete:")
+            print(f"Output shape: {tsne_points.shape}")
+            for env_idx, size in metadata['env_sizes'].items():
+                print(f"Environment {env_idx}: {size} samples")
+
+            return {
+                'points': tsne_points,
+                'metadata': metadata
             }
 
-            return visualization_data
-
         except Exception as e:
-            print(f"Error computing training representations: {str(e)}")
+            print(f"Error computing CPU t-SNE: {str(e)}")
             return None
+
+    def get_training_representations(self):
+        """Get cached t-SNE visualization"""
+        return self._cached_representations
+
+    def invalidate_representation_cache(self):
+        """Manually invalidate the representation cache"""
+        self._cached_representations = None
+        print("t-SNE cache invalidated")
 
 def main(provided_args=None):
     """Main function that can accept args from command line or from another script"""
@@ -670,26 +749,26 @@ def main(provided_args=None):
     print(f"Created {len(uda_loaders)} UDA loaders")
 
     # Check class distribution in evaluation data
-    print("\nChecking class distribution in evaluation data:")
-    for i, (env, _) in enumerate(in_splits + out_splits + uda_splits):
-        if i < len(in_splits):
-            split_type = "in"
-        elif i < len(in_splits) + len(out_splits):
-            split_type = "out"
-        else:
-            split_type = "uda"
+    # print("\nChecking class distribution in evaluation data:")
+    # for i, (env, _) in enumerate(in_splits + out_splits + uda_splits):
+    #     if i < len(in_splits):
+    #         split_type = "in"
+    #     elif i < len(in_splits) + len(out_splits):
+    #         split_type = "out"
+    #     else:
+    #         split_type = "uda"
 
-        # Count classes
-        class_counts = {}
-        for _, y, _ in env:
-            y = y.item() if isinstance(y, torch.Tensor) else y
-            class_counts[y] = class_counts.get(y, 0) + 1
+    #     # Count classes
+    #     class_counts = {}
+    #     for _, y, _ in env:
+    #         y = y.item() if isinstance(y, torch.Tensor) else y
+    #         class_counts[y] = class_counts.get(y, 0) + 1
 
-        print(f"\nSplit {i} ({split_type}):")
-        print(f"Total samples: {len(env)}")
-        print("Class distribution:")
-        for cls, count in sorted(class_counts.items()):
-            print(f"  Class {cls}: {count} samples ({count/len(env)*100:.1f}%)")
+    #     print(f"\nSplit {i} ({split_type}):")
+    #     print(f"Total samples: {len(env)}")
+    #     print("Class distribution:")
+    #     for cls, count in sorted(class_counts.items()):
+    #         print(f"  Class {cls}: {count} samples ({count/len(env)*100:.1f}%)")
 
     eval_loaders = [FastDataLoader(
         dataset=env,

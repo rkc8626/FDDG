@@ -188,9 +188,9 @@ class CCMNIST1(MultipleEnvironmentImageFolder):
 
 class BDDPerson(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 500
-    ENVIRONMENTS = ['skin_0', 'skin_1', 'skin_2']
-    def __init__(self, root, test_envs,hparams):
-        self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_new")
+    ENVIRONMENTS = ['darktime', 'daytime']
+    def __init__(self, root, test_envs, hparams):
+        self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_6k_new")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
 
