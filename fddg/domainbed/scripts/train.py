@@ -151,6 +151,39 @@ if __name__ == "__main__":
     print(f"Out splits: {[len(x[0]) for x in out_splits]}")
     print(f"UDA splits: {[len(x[0]) for x in uda_splits]}")
 
+    # Print sensitive attribute stats for each split
+    def print_sensitive_stats(env):
+        sensitive_values = []
+        for sample in env:
+            # sample: (x, y, z)
+            if len(sample) == 3:
+                z = sample[2]
+                if isinstance(z, torch.Tensor):
+                    z = z.item() if z.numel() == 1 else z.cpu().numpy().tolist()
+                sensitive_values.append(z)
+        if len(sensitive_values) > 0:
+            unique, counts = np.unique(sensitive_values, return_counts=True)
+            print("sensitive attribute stats:")
+            print(f"  Unique values: {unique}")
+            print(f"  Counts: {counts}")
+            print(f"  Mean: {np.mean(sensitive_values):.4f}")
+        else:
+            print("No sensitive attribute found.")
+
+ 
+    print_sensitive_stats(dataset[1])
+
+    print_sensitive_stats(dataset[0])
+
+
+    print_sensitive_stats(in_splits[0][0])
+
+    print_sensitive_stats(in_splits[1][0])
+
+    print_sensitive_stats(out_splits[0][0])
+
+    print_sensitive_stats(out_splits[1][0])
+
     if args.task == "domain_adaptation" and len(uda_splits) == 0:
         raise ValueError("Not enough unlabeled samples for domain adaptation.")
     print("Hparams: ", hparams)
@@ -285,13 +318,14 @@ if __name__ == "__main__":
                 aucs[key] = np.mean(val)
 
             evals = zip(eval_loader_names, eval_loaders, eval_weights)
-            for name, loader, weights in evals:
+            for idx, (name, loader, weights) in enumerate(evals):
                 acc = misc.accuracy(algorithm, loader, weights, device)
-                md = misc.md(algorithm, loader, weights, device)
-                dp = misc.dp(algorithm, loader, weights, device)
-                eo = misc.eo(algorithm, loader, weights, device)
+                # Enable debug print for the first environment only
+                debug_flag = (idx == 0)
+                md = misc.md(algorithm, loader, weights, device, debug=debug_flag)
+                dp = misc.dp(algorithm, loader, weights, device, debug=debug_flag)
+                eo = misc.eo(algorithm, loader, weights, device, debug=debug_flag)
                 t2 = time.time()
-                # breakpoint()
                 auc = misc.auc(algorithm, loader, weights, device)
 
                 results[name+'_acc'] = acc

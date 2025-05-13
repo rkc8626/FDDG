@@ -38,6 +38,15 @@ def get_algorithm_specific_params():
         'VREx': {
             'vrex_lambda': [1e1],  # default value
             'vrex_penalty_anneal_iters': [500]  # default value
+        },
+        'MLDG': {
+            'mldg_beta': [1.0]  # default value
+        },
+        'MBDG': {
+            'mbdg_dual_step_size': [0.05],  # default value
+            'mbdg_fair_step_size': [0.05],  # default value
+            'mbdg_gamma1': [0.025],  # default value
+            'mbdg_gamma2': [0.025]  # default value
         }
     }
 
@@ -63,6 +72,22 @@ def run_experiment(args, algorithm, hparams):
     # Create unique output directory for this run
     run_name = f"{algorithm}_lr_{hparams['lr']}_bs_{hparams['batch_size']}_wd_{hparams['weight_decay']}"
     output_dir = os.path.join(args.base_output_dir, run_name)
+
+    # Print detailed parameter configuration
+    print("\n" + "="*50)
+    print(f"Training Configuration for {algorithm}:")
+    print("-"*50)
+    print("Base Parameters:")
+    print(f"  Learning Rate: {hparams['lr']}")
+    print(f"  Batch Size: {hparams['batch_size']}")
+    print(f"  Weight Decay: {hparams['weight_decay']}")
+
+    # Print algorithm-specific parameters
+    print("\nAlgorithm-Specific Parameters:")
+    for key, value in hparams.items():
+        if key not in ['lr', 'batch_size', 'weight_decay']:
+            print(f"  {key}: {value}")
+    print("="*50 + "\n")
 
     # Construct command
     cmd = [
@@ -126,7 +151,7 @@ def main():
     parser.add_argument('--base_output_dir', type=str, default='grid_search_results',
                         help='Base directory for output')
     parser.add_argument('--algorithms', type=str, nargs='+',
-                        default=['ERM', 'IRM', 'GroupDRO', 'Mixup', 'CORAL', 'MMD', 'VREx'],
+                        default=['ERM', 'IRM', 'GroupDRO', 'Mixup', 'CORAL', 'MMD', 'VREx', 'MLDG', 'MBDG'],
                         help='Algorithms to evaluate')
     args = parser.parse_args()
 

@@ -497,48 +497,52 @@ class TrainingManager:
                 'sensitive': [],
                 'environments': [],
                 'env_sizes': {},
-                'predicted_labels': []
+                'predicted_labels': [],
+                'split_types': []  # Add split type tracking
             }
 
-            print("\nCollecting representations from training environments (CPU):")
+            print("\nCollecting representations from all environments (CPU):")
             for env_idx, (name, loader, _) in enumerate(zip(self.eval_loader_names, self.eval_loaders, self.eval_weights)):
-                if 'in' in name:
-                    print(f"\nProcessing environment {env_idx} ({name}):")
-                    env_features = []
-                    env_labels = []
-                    env_sensitive = []
+                print(f"\nProcessing environment {env_idx} ({name}):")
+                env_features = []
+                env_labels = []
+                env_sensitive = []
 
-                    with torch.no_grad():
-                        for x, y, z in loader:
-                            x = x.to(self.device)
-                            features = self.algorithm.featurizer(x)
-                            env_features.append(features.cpu().numpy())
-                            env_labels.append(y.cpu().numpy())
-                            env_sensitive.append(z.cpu().numpy())
-                            # Predict class labels using the model's classifier
-                            logits = self.algorithm.classifier(features)
-                            preds = torch.argmax(logits, dim=1)
-                            metadata['predicted_labels'].append(preds.cpu().numpy())
+                with torch.no_grad():
+                    for x, y, z in loader:
+                        x = x.to(self.device)
+                        features = self.algorithm.featurizer(x)
+                        env_features.append(features.cpu().numpy())
+                        env_labels.append(y.cpu().numpy())
+                        env_sensitive.append(z.cpu().numpy())
+                        # Predict class labels using the model's classifier
+                        logits = self.algorithm.classifier(features)
+                        preds = torch.argmax(logits, dim=1)
+                        metadata['predicted_labels'].append(preds.cpu().numpy())
 
-                    if env_features:
-                        # Concatenate environment data
-                        env_features = np.concatenate(env_features)
-                        env_labels = np.concatenate(env_labels)
-                        env_sensitive = np.concatenate(env_sensitive)
-                        env_predicted = np.concatenate(metadata['predicted_labels']) if metadata['predicted_labels'] else None
+                if env_features:
+                    # Concatenate environment data
+                    env_features = np.concatenate(env_features)
+                    env_labels = np.concatenate(env_labels)
+                    env_sensitive = np.concatenate(env_sensitive)
+                    env_predicted = np.concatenate(metadata['predicted_labels']) if metadata['predicted_labels'] else None
 
-                        features_list.append(env_features)
-                        metadata['labels'].append(env_labels)
-                        metadata['sensitive'].append(env_sensitive)
-                        if env_predicted is not None:
-                            metadata['predicted_labels'] = [env_predicted]  # Will be concatenated later
+                    features_list.append(env_features)
+                    metadata['labels'].append(env_labels)
+                    metadata['sensitive'].append(env_sensitive)
+                    if env_predicted is not None:
+                        metadata['predicted_labels'] = [env_predicted]  # Will be concatenated later
 
-                        env_size = len(env_features)
-                        metadata['environments'].extend([env_idx] * env_size)
-                        metadata['env_sizes'][env_idx] = env_size
+                    env_size = len(env_features)
+                    metadata['environments'].extend([env_idx] * env_size)
+                    metadata['env_sizes'][env_idx] = env_size
 
-                        print(f"  - Environment {env_idx}: {env_size} samples")
-                        print(f"  - Feature dimension: {env_features.shape[1]}")
+                    # Add split type information
+                    split_type = 'in' if 'in' in name else 'out'
+                    metadata['split_types'].extend([split_type] * env_size)
+
+                    print(f"  - Environment {env_idx} ({split_type}): {env_size} samples")
+                    print(f"  - Feature dimension: {env_features.shape[1]}")
 
             if not features_list:
                 print("No representations available")
@@ -555,6 +559,7 @@ class TrainingManager:
             print(f"Total samples: {len(metadata['environments'])}")
             print(f"Feature dimension: {all_features.shape[1]}")
             print(f"Number of environments: {len(metadata['env_sizes'])}")
+            print(f"Split types: {set(metadata['split_types'])}")
 
             # Normalize features
             mean = np.mean(all_features, axis=0)
@@ -570,7 +575,8 @@ class TrainingManager:
             print("\nt-SNE computation complete:")
             print(f"Output shape: {tsne_points.shape}")
             for env_idx, size in metadata['env_sizes'].items():
-                print(f"Environment {env_idx}: {size} samples")
+                split_type = 'in' if 'in' in self.eval_loader_names[env_idx] else 'out'
+                print(f"Environment {env_idx} ({split_type}): {size} samples")
 
             return {
                 'points': tsne_points,

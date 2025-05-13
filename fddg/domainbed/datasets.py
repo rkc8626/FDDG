@@ -119,6 +119,24 @@ class SensitiveImageFolder(ImageFolder):
         with open(dict_path + '/data.json') as f:
             self.dict = json.load(f)
 
+        # Count 0s and 1s in the second element, and check the first element
+        second_elem_counts = {0: 0, 1: 0}
+        first_elem_invalid = 0
+        for key, value in self.dict.items():
+            if len(value) > 1:
+                second = value[2]
+                if second == 0:
+                    second_elem_counts[0] += 1
+                elif second == 1:
+                    second_elem_counts[1] += 1
+                # Check first element
+                first = value[0]
+                if first not in [0, 1]:
+                    first_elem_invalid += 1
+        print(f"[SensitiveImageFolder] Second element counts: 0s={second_elem_counts[0]}, 1s={second_elem_counts[1]}")
+        if first_elem_invalid > 0:
+            print(f"[SensitiveImageFolder] WARNING: {first_elem_invalid} entries have a first element not 0 or 1!")
+
     def __getitem__(self, index: int):
         path, target = self.samples[index]
         file_name = path.split('/')[-1]
@@ -188,11 +206,12 @@ class CCMNIST1(MultipleEnvironmentImageFolder):
 
 class BDDPerson(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 500
+    # ENVIRONMENTS = ['skin_0', 'skin_1', 'skin_2']
     ENVIRONMENTS = ['darktime', 'daytime']
     def __init__(self, root, test_envs, hparams):
-        self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_6k_new")
+        # self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_6k_brandnew/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
-
 
 class FairFace(MultipleEnvironmentImageFolder):
     N_WORKERS = 4

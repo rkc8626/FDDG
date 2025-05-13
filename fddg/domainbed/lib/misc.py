@@ -124,7 +124,7 @@ def accuracy(network, loader, weights, device):
     network.train()
     return correct / total
 
-def md(algorithm, loader, weights, device):
+def md(algorithm, loader, weights, device, debug=False):
     y_1_s_0 = 0
     y_1_s_1 = 0
     s_0 = 0
@@ -151,26 +151,22 @@ def md(algorithm, loader, weights, device):
             s_0 += temp_s_0
             s_1 += temp_s_1
 
-    # Handle cases where we have no samples from one of the groups
-    if s_0 == 0 or s_1 == 0:
-        # If we have no samples from one group, we can't compute the metric
-        # Return 1.0 to indicate maximum possible difference
-        # This is a reasonable default since we can't compute the actual difference
-        return 1.0
+    if debug:
+        print(f"[md] y_1_s_0: {y_1_s_0}, y_1_s_1: {y_1_s_1}, s_0: {s_0}, s_1: {s_1}")
 
-    # Compute the difference in positive rates between groups
+    if s_0 == 0 or s_1 == 0:
+        return 1.0
     result = abs((y_1_s_0/s_0) - (y_1_s_1/s_1))
+    if debug:
+        print(f"[md] result: {result}")
     return result.item()
 
-def dp(network, loader, weights, device):
-
+def dp(network, loader, weights, device, debug=False):
     s_0 = 0
     y_1_s_0 = 0
     s_1 = 0
     y_1_s_1 = 0
-
     weights_offset = 0
-
     network.eval()
     with torch.no_grad():
         for x, y, z in loader:
@@ -179,7 +175,6 @@ def dp(network, loader, weights, device):
             z = z.to(device)
             p = network.predict(x)
             p = p.argmax(1)
-
             temp_s_1 = z.sum().item()
             temp_s_0 = z.size(0) - temp_s_1
             temp_y_1_s_0 = torch.where(torch.logical_and(p == 1, z == 0.0), 1.0, 0.0).sum().item()
@@ -188,25 +183,24 @@ def dp(network, loader, weights, device):
             y_1_s_0 += temp_y_1_s_0
             s_1 += temp_s_1
             y_1_s_1 += temp_y_1_s_1
-
+    if debug:
+        print(f"[dp] s_0: {s_0}, y_1_s_0: {y_1_s_0}, s_1: {s_1}, y_1_s_1: {y_1_s_1}")
     network.train()
-
     if y_1_s_0 == 0 or s_0 == 0 or y_1_s_1 == 0 or s_1 == 0:
         return 0
     result = (y_1_s_0/s_0) / (y_1_s_1/s_1)
+    if debug:
+        print(f"[dp] result: {result}")
     if result > 1.0:
         return 1.0/result
     return result
 
-def eo(network, loader, weights, device):
-
+def eo(network, loader, weights, device, debug=False):
     y_1_s_0 = 0
     yhat_1_y_1_s_0 = 0
     y_1_s_1 = 0
     yhat_1_y_1_s_1 = 0
-
     weights_offset = 0
-
     network.eval()
     with torch.no_grad():
         for x, y, z in loader:
@@ -215,25 +209,24 @@ def eo(network, loader, weights, device):
             z = z.to(device)
             p = network.predict(x)
             p = p.argmax(1)
-
-
             logic_y_1_s_0 = torch.logical_and(y == 1, z == 0.0)
             logic_y_1_s_1 = torch.logical_and(y == 1, z == 1.0)
             temp_y_1_s_0 = torch.where(logic_y_1_s_0, 1.0, 0.0).sum().item()
             temp_y_1_s_1 = torch.where(logic_y_1_s_1, 1.0, 0.0).sum().item()
             temp_yhat_1_y_1_s_0 = torch.where(torch.logical_and(p == 1, logic_y_1_s_0 == 1.0), 1.0, 0.0).sum().item()
             temp_yhat_1_y_1_s_1 = torch.where(torch.logical_and(p == 1, logic_y_1_s_1 == 1.0), 1.0, 0.0).sum().item()
-
             y_1_s_0 += temp_y_1_s_0
             yhat_1_y_1_s_0 += temp_yhat_1_y_1_s_0
             y_1_s_1 += temp_y_1_s_1
             yhat_1_y_1_s_1 += temp_yhat_1_y_1_s_1
-
-
+    if debug:
+        print(f"[eo] y_1_s_0: {y_1_s_0}, yhat_1_y_1_s_0: {yhat_1_y_1_s_0}, y_1_s_1: {y_1_s_1}, yhat_1_y_1_s_1: {yhat_1_y_1_s_1}")
     network.train()
     if y_1_s_0 == 0 or y_1_s_1 == 0 or yhat_1_y_1_s_1 == 0:
         return 0
     result = (yhat_1_y_1_s_0/y_1_s_0) / (yhat_1_y_1_s_1/y_1_s_1)
+    if debug:
+        print(f"[eo] result: {result}")
     if result < 1:
         return result
     else:

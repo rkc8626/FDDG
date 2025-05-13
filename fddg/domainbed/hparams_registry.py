@@ -1,4 +1,3 @@
-
 import numpy as np
 from domainbed.lib import misc
 import os
@@ -141,7 +140,7 @@ def _hparams(algorithm, dataset, random_seed, test_envs, step):
     elif algorithm in ['DANN', 'CDANN']:
         _hparam('weight_decay_g', 0., lambda r: 10**r.uniform(-6, -2))
 
-    
+
     if algorithm in ['MBDG', 'MBDG_Reg', 'MBDG_DA', 'MBDA', 'MBDG_3', 'MBDG_WF']:
         if dataset == 'ColoredMNIST':
             model_root = './domainbed/munit/saved_models/colored_mnist'

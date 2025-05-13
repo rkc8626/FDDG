@@ -440,6 +440,22 @@ function TrainingVisualization({ data, sensitiveColorMap }) {
           parsing: false,
           normalized: true
         }));
+      } else if (colorMode === 'split') {
+        groupValues = data.split_types;
+        groupSet = Array.from(new Set(data.split_types));
+        groupKey = 'Split';
+        groupGuide = {};
+        groupSet.forEach(split => { groupGuide[split] = data.split_types.filter(s => s === split).length; });
+        datasets = groupSet.map((group, idx) => ({
+          label: `${groupKey} ${group}`,
+          data: data.points.filter((_, i) => groupValues[i] === group),
+          backgroundColor: colorList[idx % colorList.length],
+          pointStyle: 'circle',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          parsing: false,
+          normalized: true
+        }));
       } else if (colorMode === 'class_sensitive') {
         // Dual encoding: color by predicted class, shape by sensitive
         const predLabels = data.predicted_labels && data.predicted_labels.length === data.points.length
@@ -619,6 +635,7 @@ function TrainingVisualization({ data, sensitiveColorMap }) {
         <MenuItem value="sensitive">Sensitive Attribute</MenuItem>
         <MenuItem value="label">Class Label</MenuItem>
         <MenuItem value="environment">Environment</MenuItem>
+        <MenuItem value="split">Train/Test Split</MenuItem>
         <MenuItem value="class_sensitive">Class + Sensitive</MenuItem>
       </Select>
     </FormControl>
