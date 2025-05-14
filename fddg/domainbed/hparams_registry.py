@@ -167,6 +167,8 @@ def _hparams(algorithm, dataset, random_seed, test_envs, step):
 
         else:
             raise NotImplementedError(f'Dataset {dataset} not implemented for MBDG')
+            # model_root = None # for BDDPerson just mark it as None to avoid error
+
 
         # model_path = os.path.join(model_root,
         #     f'model-dom{"".join([str(e) for e in test_envs])}.pt')

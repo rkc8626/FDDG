@@ -421,7 +421,6 @@ class MBDA(MBDG_Base):
 
 class Fish(Algorithm):
 
-
     def __init__(self, input_shape, num_classes, num_domains, hparams=None):
         super(Fish, self).__init__(input_shape, num_classes, num_domains,
                                    hparams)
@@ -435,6 +434,14 @@ class Fish(Algorithm):
             weight_decay=self.hparams['weight_decay']
         )
         self.optimizer_inner_state = None
+
+        # Initialize loss attributes
+        self.loss = 0.0
+        self.l_cls = 0.0  # classification loss
+        self.l_inv = 0.0  # invariance loss (not used in ERM but needed for logging)
+        self.l_fair = 0.0  # fairness loss (not used in ERM but needed for logging)
+        self.dual_var1 = 0.0  # dual variable 1 (not used in ERM but needed for logging)
+        self.dual_var2 = 0.0  # dual variable 2 (not used in ERM but needed for logging)
 
     def create_clone(self, device):
         self.network_inner = networks.WholeFish(self.input_shape, self.num_classes, self.hparams,
@@ -456,7 +463,7 @@ class Fish(Algorithm):
     def update(self, minibatches, unlabeled=None):
         self.create_clone(minibatches[0][0].device)
 
-        for x, y in minibatches:
+        for x, y, z in minibatches:
             loss = F.cross_entropy(self.network_inner(x), y)
             self.optimizer_inner.zero_grad()
             loss.backward()
@@ -469,6 +476,8 @@ class Fish(Algorithm):
             lr_meta=self.hparams["meta_lr"]
         )
         self.network.reset_weights(meta_weights)
+
+        self.loss = loss  # Set the loss attribute for logging
 
         return {'loss': loss.item()}
 
@@ -629,11 +638,9 @@ class IRM(ERM):
         nll = 0.
         penalty = 0.
 
-        # all_x = torch.cat([x for x,y in minibatches])
         all_x = torch.cat([x for x, y, z in minibatches])
         all_logits = self.network(all_x)
         all_logits_idx = 0
-        # for i, (x, y) in enumerate(minibatches):
         for i, (x, y, z) in enumerate(minibatches):
             logits = all_logits[all_logits_idx:all_logits_idx + x.shape[0]]
             all_logits_idx += x.shape[0]
@@ -674,11 +681,11 @@ class VREx(ERM):
 
         nll = 0.
 
-        all_x = torch.cat([x for x, y in minibatches])
+        all_x = torch.cat([x for x, y, z in minibatches])
         all_logits = self.network(all_x)
         all_logits_idx = 0
         losses = torch.zeros(len(minibatches))
-        for i, (x, y) in enumerate(minibatches):
+        for i, (x, y, z) in enumerate(minibatches):
             logits = all_logits[all_logits_idx:all_logits_idx + x.shape[0]]
             all_logits_idx += x.shape[0]
             nll = F.cross_entropy(logits, y)
@@ -795,7 +802,7 @@ class MLDG(ERM):
             if p.grad is None:
                 p.grad = torch.zeros_like(p)
 
-        for (xi, yi), (xj, yj) in random_pairs_of_minibatches(minibatches):
+        for (xi, yi, zi), (xj, yj, zj) in random_pairs_of_minibatches(minibatches):
             # fine tune clone-network on task "i"
             inner_net = copy.deepcopy(self.network)
 
@@ -1014,6 +1021,14 @@ class SagNet(Algorithm):
             num_classes,
             self.hparams['nonlinear_classifier'])
 
+        # Initialize loss attributes
+        self.loss = 0.0
+        self.l_cls = 0.0  # classification loss
+        self.l_inv = 0.0  # invariance loss (not used in ERM but needed for logging)
+        self.l_fair = 0.0  # fairness loss (not used in ERM but needed for logging)
+        self.dual_var1 = 0.0  # dual variable 1 (not used in ERM but needed for logging)
+        self.dual_var2 = 0.0  # dual variable 2 (not used in ERM but needed for logging)
+
         # # This commented block of code implements something closer to the
         # # original paper, but is specific to ResNet and puts in disadvantage
         # # the other algorithms.
@@ -1083,8 +1098,8 @@ class SagNet(Algorithm):
         return x.view(*sizes)
 
     def update(self, minibatches, unlabeled=None):
-        all_x = torch.cat([x for x, y in minibatches])
-        all_y = torch.cat([y for x, y in minibatches])
+        all_x = torch.cat([x for x, y, z in minibatches])
+        all_y = torch.cat([y for x, y, z in minibatches])
 
         # learn content
         self.optimizer_f.zero_grad()
@@ -1205,7 +1220,7 @@ class ANDMask(ERM):
 
         total_loss = 0
         param_gradients = [[] for _ in self.network.parameters()]
-        all_x = torch.cat([x for x,y in minibatches])
+        all_x = torch.cat([x for x, y, z in minibatches])
         all_logits = self.network(all_x)
         all_logits_idx = 0
         for i, (x, y) in enumerate(minibatches):
@@ -1250,20 +1265,20 @@ class IGA(ERM):
 
     def update(self, minibatches, unlabeled=False):
 
-        all_x = torch.cat([x for x,y in minibatches])
+        all_x = torch.cat([x for x, y, z in minibatches])
         all_logits = self.network(all_x)
 
         total_loss = 0
         all_logits_idx = 0
         grads = []
-        for i, (x, y) in enumerate(minibatches):
+        for i, (x, y, z) in enumerate(minibatches):
             logits = all_logits[all_logits_idx:all_logits_idx + x.shape[0]]
             all_logits_idx += x.shape[0]
 
             env_loss = F.cross_entropy(logits, y)
             total_loss += env_loss
 
-            grads.append( autograd.grad(env_loss, self.network.parameters(), retain_graph=True) )
+            grads.append(autograd.grad(env_loss, self.network.parameters(), retain_graph=True))
 
         mean_loss = total_loss / len(minibatches)
         mean_grad = autograd.grad(mean_loss, self.network.parameters(), retain_graph=True)
@@ -1277,6 +1292,5 @@ class IGA(ERM):
         self.optimizer.zero_grad()
         (mean_loss + self.hparams['penalty'] * penalty_value).backward()
         self.optimizer.step()
-
 
         return {'loss': mean_loss.item(), 'penalty': penalty_value.item()}

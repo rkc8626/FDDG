@@ -47,11 +47,31 @@ def get_algorithm_specific_params():
             'mbdg_fair_step_size': [0.05],  # default value
             'mbdg_gamma1': [0.025],  # default value
             'mbdg_gamma2': [0.025]  # default value
+        },
+        'IGA': {
+            'penalty': [1000]  # default value
+        },
+        'ANDMask': {
+            'tau': [1.0]  # default value
+        },
+        'Fish': {
+            'meta_lr': [0.5]  # default value
+        },
+        'SagNet': {
+            'sag_w_adv': [0.1]  # default value
         }
     }
 
 def get_param_combinations(algorithm):
     """Get all parameter combinations for a specific algorithm"""
+    if algorithm == 'Fish':
+        # Hard code the remaining combinations for Fish
+        return [
+            {'lr': 1e-4, 'batch_size': 64, 'weight_decay': 0.0, 'meta_lr': 0.5},
+            {'lr': 1e-4, 'batch_size': 64, 'weight_decay': 1e-4, 'meta_lr': 0.5}
+        ]
+
+    # For other algorithms, use the original grid search
     base_params = get_base_param_grid()
     algorithm_params = get_algorithm_specific_params()[algorithm]
 
@@ -134,6 +154,14 @@ def run_experiment(args, algorithm, hparams):
     metrics['combined_score'] = combined_score
     return metrics
 
+def check_existing_result(output_dir):
+    """Check if results already exist for a given configuration"""
+    results_file = os.path.join(output_dir, 'results.jsonl')
+    exists = os.path.exists(results_file)
+    print(f"Checking for results in: {results_file}")
+    print(f"File exists: {exists}")
+    return exists
+
 def main():
     # Check GPU availability
     if torch.cuda.is_available():
@@ -151,8 +179,10 @@ def main():
     parser.add_argument('--base_output_dir', type=str, default='grid_search_results',
                         help='Base directory for output')
     parser.add_argument('--algorithms', type=str, nargs='+',
-                        default=['ERM', 'IRM', 'GroupDRO', 'Mixup', 'CORAL', 'MMD', 'VREx', 'MLDG', 'MBDG'],
-                        help='Algorithms to evaluate')
+        default=['ERM', 'IRM', 'GroupDRO', 'Mixup', 'CORAL', 'MMD', 'VREx', 'MLDG', 'MBDG', 'IGA', 'ANDMask', 'Fish', 'SagNet'],
+        help='Algorithms to evaluate')
+    parser.add_argument('--skip_existing', action='store_true',
+                        help='Skip configurations that have already been run')
     args = parser.parse_args()
 
     # Create base output directory
@@ -170,6 +200,20 @@ def main():
 
         # Run experiments for each parameter combination
         for hparams in tqdm(param_combinations, desc=f"{algorithm} parameters", leave=False):
+            # Create unique output directory for this run
+            run_name = f"{algorithm}_lr_{hparams['lr']}_bs_{hparams['batch_size']}_wd_{hparams['weight_decay']}"
+            output_dir = os.path.join(args.base_output_dir, run_name)
+
+            # Skip if results exist and skip_existing is True
+            if args.skip_existing and check_existing_result(output_dir):
+                print(f"\n######Skipping existing configuration######:")
+                print(f"  Algorithm: {algorithm}")
+                print(f"  Learning Rate: {hparams['lr']}")
+                print(f"  Batch Size: {hparams['batch_size']}")
+                print(f"  Weight Decay: {hparams['weight_decay']}")
+                print(f"  Output Directory: {output_dir}")
+                continue
+
             print(f"\nRunning {algorithm} with parameters:")
             print(f"  lr: {hparams['lr']}")
             print(f"  batch_size: {hparams['batch_size']}")
