@@ -170,11 +170,10 @@ if __name__ == "__main__":
         else:
             print("No sensitive attribute found.")
 
- 
+
     print_sensitive_stats(dataset[1])
 
     print_sensitive_stats(dataset[0])
-
 
     print_sensitive_stats(in_splits[0][0])
 
