@@ -159,6 +159,8 @@ while True:
                 elif args.step == 2:
                     test_image_outputs = trainer1.module.sample2(test_display_images_a, test_display_images_b, trainer)
             write_2images(test_image_outputs, display_size, image_directory, 'test_%08d' % (iterations + 1))
+            image_save_path = os.path.join(image_directory, 'test_%08d' % (iterations + 1))
+            print(f"Saved images to: {image_save_path}")
             write_html(output_directory + "/index.html", iterations + 1, config['image_save_iter'], 'images')
 
         # Save network weights
