@@ -1,4 +1,3 @@
-
 import tensorboardX
 import argparse
 
@@ -24,7 +23,7 @@ startTime = time.time()
 parser = argparse.ArgumentParser(description='PyTorch training')
 parser.add_argument('--config', type=str, default='core/tiny_munit.yaml',
                         help='Path to the MUNIT config file.')
-parser.add_argument('--output_path', type=str, default='/home/YOUR_PATH/data/kdd2023/models/results',
+parser.add_argument('--output_path', type=str, default='/home/chenz1/munit_results',
                         help="Path where images/checkpoints will be saved")
 parser.add_argument("--resume", action="store_true",
                         help='Resumes training from last avaiable checkpoint')
@@ -87,14 +86,17 @@ elif args.dataset == "YFCC":
     train_loader_a, train_loader_b, test_loader_a, test_loader_b = get_YFCC_loaders(args.env, args.batch)
 elif args.dataset == "NYPD":
     train_loader_a, train_loader_b, test_loader_a, test_loader_b = get_NYPD_loaders(args.env, args.batch)
-
-
+elif args.dataset == "BDDPerson":
+    train_loader_a, train_loader_b, test_loader_a, test_loader_b = get_BDDPersons_loaders(args.env, args.batch, config)
 
 
 train_display_images_a = torch.stack([train_loader_a.dataset[i][0] for i in range(display_size)]).cuda()
 train_display_images_b = torch.stack([train_loader_b.dataset[i][0] for i in range(display_size)]).cuda()
 test_display_images_a = torch.stack([test_loader_a.dataset[-1-i][0] for i in range(display_size)]).cuda()
 test_display_images_b = torch.stack([test_loader_b.dataset[i][0] for i in range(display_size)]).cuda()
+
+
+
 
 # Setup logger and output folders
 model_name = os.path.splitext(os.path.basename(args.config))[0]
@@ -171,3 +173,5 @@ train_writer.close()
 endTime = time.time()
 
 print("Running Time:", (endTime-startTime)/3600, "hours")
+
+print(torch.cuda.is_available())

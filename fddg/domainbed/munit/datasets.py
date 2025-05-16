@@ -118,6 +118,15 @@ class CCMNIST1(MultipleEnvironmentImageFolder):
         self.dir = os.path.join("/home/YOUR_PATH/data/CCMNIST1/")
         super().__init__(self.dir, test_envs)
 
+class BDDPerson(MultipleEnvironmentImageFolder):
+    CHECKPOINT_FREQ = 500
+    # ENVIRONMENTS = ['skin_0', 'skin_1', 'skin_2']
+    ENVIRONMENTS = ['darktime', 'daytime']
+    def __init__(self, root, test_envs, hparams):
+        # self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_6k_brandnew/")
+        super().__init__(self.dir, test_envs)
+
 class FairFace(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ['0', '1', '2', '3', '4', '5', '6']
@@ -165,6 +174,11 @@ def get_CelebA5_loaders(env):
 def get_CCMNIST1_loaders(env, batch_size):
 
     env_dataset = CCMNIST1('/home/YOUR_PATH/data/', env).dataset
+    loader = DataLoader(env_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
+    return loader, loader, loader, loader
+
+def get_BDDPersons_loaders(env, batch_size, hparams):
+    env_dataset = BDDPerson('/home/chenz1/toorange/Data/bdd100k_person/processed_6k_brandnew/', env, hparams).dataset
     loader = DataLoader(env_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
     return loader, loader, loader, loader
 
