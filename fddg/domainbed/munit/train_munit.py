@@ -23,7 +23,7 @@ startTime = time.time()
 parser = argparse.ArgumentParser(description='PyTorch training')
 parser.add_argument('--config', type=str, default='core/tiny_munit.yaml',
                         help='Path to the MUNIT config file.')
-parser.add_argument('--output_path', type=str, default='/home/chenz1/munit_results',
+parser.add_argument('--output_path', type=str, default='/home/chenz1/munit_results_new',
                         help="Path where images/checkpoints will be saved")
 parser.add_argument("--resume", action="store_true",
                         help='Resumes training from last avaiable checkpoint')
@@ -35,11 +35,11 @@ parser.add_argument('--env', type=int, default=0,
                         help="env not including")
 parser.add_argument('--step', type=int, default=12,
                         help="training step 1 or 2 or cotraining:12")
-parser.add_argument('--input_path', type=str, default='/data/YOUR_PATH/kdd2023/models/NYPD/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
+parser.add_argument('--input_path', type=str, default='/home/chenz1/munit_results_new/models/PDDPerson/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
                         help="Path where images/checkpoints will be saved")
-parser.add_argument('--input_path1', type=str, default='/data/YOUR_PATH/kdd2023/models/NYPD/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
+parser.add_argument('--input_path1', type=str, default='/home/chenz1/munit_results_new/models/PDDPerson/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
                         help="Path where images/checkpoints will be saved")
-parser.add_argument('--input_path2', type=str, default='/data/YOUR_PATH/kdd2023/models/NYPD/pretrain_env0_step2/outputs/tiny_munit/checkpoints',
+parser.add_argument('--input_path2', type=str, default='/home/chenz1/munit_results_new/models/PDDPerson/pretrain_env0_step2/outputs/tiny_munit/checkpoints',
                         help="Path where images/checkpoints will be saved")
 parser.add_argument('--device', type=str, default='7',
                         help="CUDA DEVICE")

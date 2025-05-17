@@ -165,13 +165,14 @@ def _hparams(algorithm, dataset, random_seed, test_envs, step):
         elif dataset == 'NYPD':
             model_root = './domainbed/munit/saved_models/NYPD/'
 
+        elif dataset == 'BDDPerson':
+            model_root = '/home/chenz1/toorange/FDDG/fddg/domainbed/munit/saved_models/BDDPerson'
+
         else:
             raise NotImplementedError(f'Dataset {dataset} not implemented for MBDG')
-            # model_root = None # for BDDPerson just mark it as None to avoid error
 
-
-        # model_path = os.path.join(model_root,
-        #     f'model-dom{"".join([str(e) for e in test_envs])}.pt')
+        model_path = os.path.join(model_root,
+            f'model-dom{"".join([str(e) for e in test_envs])}.pt')
         model_path1 = os.path.join(model_root,
                                   f'{"".join([str(e) for e in test_envs])}_step1.pt')
         model_path2 = os.path.join(model_root,
