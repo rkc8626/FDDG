@@ -350,9 +350,8 @@ if __name__ == "__main__":
             aucs_keys = sorted(aucs.keys())
 
             # print accuracy
-            if results_keys != last_results_keys:
-                misc.print_row(results_keys, colwidth=12) # print name of each column
-                last_results_keys = results_keys
+            misc.print_row(results_keys, colwidth=12) # print name of each column
+            last_results_keys = results_keys
             misc.print_row([results[key] for key in results_keys],
                 colwidth=12)
 

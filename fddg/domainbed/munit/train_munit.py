@@ -23,7 +23,7 @@ startTime = time.time()
 parser = argparse.ArgumentParser(description='PyTorch training')
 parser.add_argument('--config', type=str, default='core/tiny_munit.yaml',
                         help='Path to the MUNIT config file.')
-parser.add_argument('--output_path', type=str, default='/home/chenz1/munit_results_new',
+parser.add_argument('--output_path', type=str, default='/home/chenz1/toorange/FDDG/fddg/domainbed/munit/munit_results_new',
                         help="Path where images/checkpoints will be saved")
 parser.add_argument("--resume", action="store_true",
                         help='Resumes training from last avaiable checkpoint')
@@ -35,20 +35,42 @@ parser.add_argument('--env', type=int, default=0,
                         help="env not including")
 parser.add_argument('--step', type=int, default=12,
                         help="training step 1 or 2 or cotraining:12")
-parser.add_argument('--input_path', type=str, default='/home/chenz1/munit_results_new/models/PDDPerson/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
+parser.add_argument('--input_path', type=str, default='/home/chenz1/toorange/FDDG/fddg/domainbed/munit/munit_results_new/models/PDDPerson/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
                         help="Path where images/checkpoints will be saved")
-parser.add_argument('--input_path1', type=str, default='/home/chenz1/munit_results_new/models/PDDPerson/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
+parser.add_argument('--input_path1', type=str, default='/home/chenz1/toorange/FDDG/fddg/domainbed/munit/munit_results_new/models/PDDPerson/pretrain_env0_step1/outputs/tiny_munit/checkpoints',
                         help="Path where images/checkpoints will be saved")
-parser.add_argument('--input_path2', type=str, default='/home/chenz1/munit_results_new/models/PDDPerson/pretrain_env0_step2/outputs/tiny_munit/checkpoints',
+parser.add_argument('--input_path2', type=str, default='/home/chenz1/toorange/FDDG/fddg/domainbed/munit/munit_results_new/models/PDDPerson/pretrain_env0_step2/outputs/tiny_munit/checkpoints',
                         help="Path where images/checkpoints will be saved")
-parser.add_argument('--device', type=str, default='7',
+parser.add_argument('--device', type=str, default='0,1,2,3',
                         help="CUDA DEVICE")
 
 args = parser.parse_args()
 
+# Set CUDA device before any CUDA operations
+os.environ["CUDA_VISIBLE_DEVICES"] = args.device
+torch.cuda.init()  # Initialize CUDA explicitly
 
-os.environ["CUDA_VISIBLE_DEVICES"] =args.device
+# Verify CUDA is available
+if not torch.cuda.is_available():
+    raise RuntimeError("CUDA is not available. Please check your GPU installation.")
 
+def print_gpu_memory():
+    print("\n=== GPU Memory Usage ===")
+    for i in range(torch.cuda.device_count()):
+        print(f"GPU {i}: {torch.cuda.get_device_name(i)}")
+        print(f"Memory Allocated: {torch.cuda.memory_allocated(i) / 1024**2:.2f} MB")
+        print(f"Memory Reserved: {torch.cuda.memory_reserved(i) / 1024**2:.2f} MB")
+    print("======================\n")
+
+# Print GPU information
+print(f"\n=== GPU Information ===")
+print(f"CUDA available: {torch.cuda.is_available()}")
+print(f"CUDA device count: {torch.cuda.device_count()}")
+print(f"Current CUDA device: {torch.cuda.current_device()}")
+print(f"CUDA device name: {torch.cuda.get_device_name(0)}")
+print(f"CUDA visible devices: {os.environ.get('CUDA_VISIBLE_DEVICES', 'all')}")
+print_gpu_memory()
+print("======================\n")
 
 cudnn.benchmark = True
 
@@ -62,19 +84,24 @@ config['dis']['dataset'] = args.dataset
 
 # Setup model and data loader
 device = torch.device('cuda')
-os.environ['WORLD_SIZE'] = '4'
-os.environ['RANK']= '0'
-os.environ['MASTER_ADDR']= 'localhost'
-os.environ['MASTER_PORT']= '12345'
+os.environ['WORLD_SIZE'] = str(torch.cuda.device_count())
+os.environ['RANK'] = '0'
+os.environ['MASTER_ADDR'] = 'localhost'
+os.environ['MASTER_PORT'] = '12345'
 
+# Initialize models with DataParallel
 if args.step == 1:
-    trainer1 = torch.nn.DataParallel(MUNIT_Trainer1(config))
+    trainer1 = MUNIT_Trainer1(config)
+    trainer1 = torch.nn.DataParallel(trainer1, device_ids=list(range(torch.cuda.device_count())))
 elif args.step == 2:
-    trainer1 = torch.nn.DataParallel(MUNIT_Trainer1(config))
-    trainer2 = torch.nn.DataParallel(MUNIT_Trainer2(config))
+    trainer1 = MUNIT_Trainer1(config)
+    trainer2 = MUNIT_Trainer2(config)
+    trainer1 = torch.nn.DataParallel(trainer1, device_ids=list(range(torch.cuda.device_count())))
+    trainer2 = torch.nn.DataParallel(trainer2, device_ids=list(range(torch.cuda.device_count())))
     trainer2.to(device)
 elif args.step == 12:
-    trainer1 = torch.nn.DataParallel(MUNIT_Trainer(config))
+    trainer1 = MUNIT_Trainer(config)
+    trainer1 = torch.nn.DataParallel(trainer1, device_ids=list(range(torch.cuda.device_count())))
 trainer1.to(device)
 
 
@@ -107,16 +134,39 @@ shutil.copy(args.config, os.path.join(output_directory, 'config.yaml')) # copy c
 
 # Start training
 if args.step == 1:
-    iterations = trainer1.module.resume(checkpoint_directory, hyperparameters=config) if args.resume else 0
+    if args.resume:
+        try:
+            iterations = trainer1.module.resume(checkpoint_directory, hyperparameters=config)
+        except IndexError:
+            print("No checkpoint found. Starting training from scratch.")
+            iterations = 0
+    else:
+        iterations = 0
     trainer = trainer1
 elif args.step == 12:
-    iterations = trainer1.module.resume(checkpoint_directory, hyperparameters=config) if args.resume else 0
+    if args.resume:
+        try:
+            iterations = trainer1.module.resume(checkpoint_directory, hyperparameters=config)
+        except IndexError:
+            print("No checkpoint found. Starting training from scratch.")
+            iterations = 0
+    else:
+        iterations = 0
     trainer = trainer1
-    # trainer1.module.resume1(args.input_path1, hyperparameters=config)
-    # trainer1.module.resume2(args.input_path2, hyperparameters=config)
 elif args.step == 2:
-    _ = trainer1.module.resume(args.input_path, hyperparameters=config)
-    iterations = trainer2.module.resume(checkpoint_directory, hyperparameters=config) if args.resume else 0
+    try:
+        _ = trainer1.module.resume(args.input_path, hyperparameters=config)
+    except IndexError:
+        print("No checkpoint found in input_path. Please ensure checkpoint exists.")
+        sys.exit(1)
+    if args.resume:
+        try:
+            iterations = trainer2.module.resume(checkpoint_directory, hyperparameters=config)
+        except IndexError:
+            print("No checkpoint found. Starting training from scratch.")
+            iterations = 0
+    else:
+        iterations = 0
     trainer = trainer2
 while True:
     for it, (a, b) in enumerate(zip(train_loader_a, train_loader_b)):
@@ -162,6 +212,7 @@ while True:
             image_save_path = os.path.join(image_directory, 'test_%08d' % (iterations + 1))
             print(f"Saved images to: {image_save_path}")
             write_html(output_directory + "/index.html", iterations + 1, config['image_save_iter'], 'images')
+            print_gpu_memory()
 
         # Save network weights
         if (iterations + 1) % config['snapshot_save_iter'] == 0:

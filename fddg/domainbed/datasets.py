@@ -210,7 +210,10 @@ class BDDPerson(MultipleEnvironmentImageFolder):
     ENVIRONMENTS = ['darktime', 'daytime']
     def __init__(self, root, test_envs, hparams):
         # self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed/")
-        self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_6k_brandnew/")
+        # self.dir = os.path.join("/home/chenz1/toorange/Data/bdd100k_person/processed_6k_brandnew/")
+        # self.dir = os.path.join("/home/chenz1/toorange/Data/new_8k_520/processed_8k_skin")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/new_8k_520/processed_8k_weather")
+        # self.dir = os.path.join("/home/chenz1/toorange/Data/new_8k_520/processed_8k_scene")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
 class FairFace(MultipleEnvironmentImageFolder):
