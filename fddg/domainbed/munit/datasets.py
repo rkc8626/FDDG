@@ -179,7 +179,7 @@ def get_CCMNIST1_loaders(env, batch_size):
 
 def get_BDDPersons_loaders(env, batch_size, hparams):
     # env_dataset = BDDPerson('/home/chenz1/toorange/Data/bdd100k_person/processed_6k_brandnew/', env, hparams).dataset
-    env_dataset = BDDPerson('/home/chenz1/toorange/Data/new_8k_520/processed_8k_520', env, hparams).dataset
+    env_dataset = BDDPerson('/home/chenz1/toorange/Data/new_8k_520/processed_8k_weather', env, hparams).dataset
 
     loader = DataLoader(env_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
     return loader, loader, loader, loader
