@@ -32,3 +32,9 @@ build/
 .idea/fddg/debug_webapp_output/
 fddg/train_output/
 fddg/grid_search_results/
+
+# Newly added folders
+fddg/domainbed/munit/saved_models/
+fddg/domainbed/munit/munit_results_new/
+fddg/results_tsne/
+fddg/domainbed/scripts/__pycache__/

@@ -26,6 +26,184 @@ from domainbed.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
 
 import tensorboardX
 
+def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
+    """Save predictions to JSON files using a simple dataloader for all images"""
+    algorithm.eval()
+    algorithm.to(device)
+
+    all_predictions = []
+    summary = {
+        'total_samples': 0,
+        'correct_predictions': 0,
+        'accuracy': 0.0,
+        'class_distribution': {},
+        'confidence_stats': {
+            'mean': 0.0,
+            'std': 0.0,
+            'min': 1.0,
+            'max': 0.0
+        }
+    }
+
+    confidences = []
+
+    # Create a simple dataloader for all images across all environments
+    all_samples = []
+    for env_idx, env in enumerate(dataset):
+        for sample_idx, sample in enumerate(env):
+            # Add environment and sample information to each sample
+            if len(sample) == 3:
+                x, y, z = sample
+            else:
+                x, y = sample
+                z = torch.zeros_like(y)  # Default sensitive attribute
+
+            all_samples.append((x, y, z, env_idx, sample_idx))
+
+    # Create a simple dataset class
+    class SimpleDataset(torch.utils.data.Dataset):
+        def __init__(self, samples):
+            self.samples = samples
+
+        def __len__(self):
+            return len(self.samples)
+
+        def __getitem__(self, idx):
+            x, y, z, env_idx, sample_idx = self.samples[idx]
+            return x, y, z, env_idx, sample_idx
+
+    # Create simple dataloader
+    simple_dataset = SimpleDataset(all_samples)
+    simple_loader = torch.utils.data.DataLoader(
+        dataset=simple_dataset,
+        batch_size=64,
+        shuffle=False,
+        num_workers=4
+    )
+
+    print(f"Processing {len(all_samples)} total samples across {len(dataset)} environments")
+
+    with torch.no_grad():
+        for batch_idx, batch in enumerate(simple_loader):
+            x, y, z, env_indices, sample_indices = batch
+
+            x = x.to(device)
+            y = y.to(device)
+            z = z.to(device)
+
+            # Get predictions
+            logits = algorithm.predict(x)
+            probabilities = torch.softmax(logits, dim=1)
+            predicted_classes = torch.argmax(logits, dim=1)
+            confidences_batch = torch.max(probabilities, dim=1)[0]
+
+            # Process each sample in the batch
+            for i in range(len(x)):
+                env_idx = env_indices[i].item()
+                sample_idx = sample_indices[i].item()
+
+                # Get filename and additional labels from the original dataset
+                filename = None
+                filepath = None
+                additional_labels = {}
+
+                # Try to get file information from the original dataset
+                try:
+                    original_env = dataset[env_idx]
+                    if hasattr(original_env, 'samples') and sample_idx < len(original_env.samples):
+                        filepath, _ = original_env.samples[sample_idx]
+                        filename = os.path.basename(filepath)
+                    elif hasattr(original_env, 'imgs') and sample_idx < len(original_env.imgs):
+                        filepath, _ = original_env.imgs[sample_idx]
+                        filename = os.path.basename(filepath)
+                except Exception as e:
+                    print(f"Warning: Could not get file info for env {env_idx}, sample {sample_idx}. Error: {e}")
+
+                if filename is None:
+                    filename = f"env{env_idx}_sample{sample_idx}.jpg"
+                    filepath = ""
+
+                # Try to get additional labels from dataset metadata
+                try:
+                    if hasattr(dataset, 'dict') and isinstance(dataset.dict, dict):
+                        if filename in dataset.dict:
+                            additional_labels_raw = dataset.dict[filename]
+                            if isinstance(additional_labels_raw, list) and len(additional_labels_raw) >= 3:
+                                additional_labels = {
+                                    'timeofday': additional_labels_raw[0],
+                                    'isperson': additional_labels_raw[1],
+                                    'weather': additional_labels_raw[2]
+                                }
+                            elif isinstance(additional_labels_raw, dict):
+                                additional_labels = additional_labels_raw
+                except Exception as e:
+                    print(f"Warning: Could not get additional labels for {filename}. Error: {e}")
+
+                # Create prediction entry
+                prediction = {
+                    'filename': filename,
+                    'filepath': filepath,
+                    'predicted_class': predicted_classes[i].item(),
+                    'predicted_probabilities': probabilities[i].cpu().numpy().tolist(),
+                    'is_person': predicted_classes[i].item() == 1,
+                    'confidence': confidences_batch[i].item(),
+                    'true_label': y[i].item(),
+                    'sensitive_attribute': z[i].item(),
+                    'environment': env_idx,
+                    'sample_index': sample_idx,
+                    'timeofday': env_idx,
+                    'isperson': y[i].item(),
+                    'weather': z[i].item()
+                }
+
+                # Add additional labels if available
+                if additional_labels:
+                    prediction.update(additional_labels)
+
+                all_predictions.append(prediction)
+                confidences.append(confidences_batch[i].item())
+
+                # Update summary statistics
+                summary['total_samples'] += 1
+                if predicted_classes[i].item() == y[i].item():
+                    summary['correct_predictions'] += 1
+
+                pred_class = predicted_classes[i].item()
+                if pred_class not in summary['class_distribution']:
+                    summary['class_distribution'][pred_class] = 0
+                summary['class_distribution'][pred_class] += 1
+
+    # Calculate final summary statistics
+    if summary['total_samples'] > 0:
+        summary['accuracy'] = summary['correct_predictions'] / summary['total_samples']
+
+    if confidences:
+        summary['confidence_stats']['mean'] = float(np.mean(confidences))
+        summary['confidence_stats']['std'] = float(np.std(confidences))
+        summary['confidence_stats']['min'] = float(np.min(confidences))
+        summary['confidence_stats']['max'] = float(np.max(confidences))
+
+    # Save predictions to JSON
+    if step is not None:
+        predictions_file = os.path.join(output_dir, f'step_{step}_predictions.json')
+        summary_file = os.path.join(output_dir, f'step_{step}_predictions_summary.json')
+    else:
+        predictions_file = os.path.join(output_dir, 'predictions.json')
+        summary_file = os.path.join(output_dir, 'predictions_summary.json')
+
+    with open(predictions_file, 'w') as f:
+        json.dump(all_predictions, f, indent=2)
+
+    print(f"Predictions saved to {predictions_file}")
+    print(f"Total predictions: {len(all_predictions)}")
+
+    # Save summary
+    with open(summary_file, 'w') as f:
+        json.dump(summary, f, indent=2)
+
+    print(f"Prediction summary saved to {summary_file}")
+    algorithm.train()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Domain generalization')
     parser.add_argument('--data_dir', type=str, default="./domainbed/data/")
@@ -53,6 +231,7 @@ if __name__ == "__main__":
         help="For domain adaptation, % of test to use unlabeled for training.")
     parser.add_argument('--skip_model_save', action='store_true')
     parser.add_argument('--save_model_every_checkpoint', action='store_true')
+    parser.add_argument('--save_predictions_every_checkpoint', action='store_true', help='Save predictions every checkpoint')
     parser.add_argument('--step', type=int, default=2,
                         help='Cotrain:2, Pretrain:3')
     args = parser.parse_args()
@@ -397,10 +576,16 @@ if __name__ == "__main__":
             if args.save_model_every_checkpoint:
                 save_checkpoint(f'model_step{step}.pkl')
 
+            if args.save_predictions_every_checkpoint:
+                save_predictions_to_json(algorithm, dataset, device, args.output_dir, step=step)
+
     save_checkpoint('model.pkl')
+
+    # Save predictions for all images
+    if not args.save_predictions_every_checkpoint:
+        save_predictions_to_json(algorithm, dataset, device, args.output_dir)
 
     with open(os.path.join(args.output_dir, 'done'), 'w') as f:
         f.write('done')
 
     train_writer.close()
-

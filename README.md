@@ -52,3 +52,12 @@ python -m domainbed.scripts.train --output_dir /result_path --test_envs 0 --data
 | GroupDRO | 0.0001 | 64 | 0.0 | η=0.01 | 0.9792 | 1.0 | 1.0 | 0.0 | 0.3917 |
 | GroupDRO | 5e-05 | 64 | 0.0001 | η=0.01 | 0.9757 | 1.0 | 1.0 | 0.0 | 0.3903 |
 | ERM | 5e-05 | 64 | 0.0001 | - | 0.9688 | 1.0 | 1.0 | 0.0 | 0.3875 |
+
+
+## Run the interface
+
+### Backend
+
+### Frontend
+
+### Activate

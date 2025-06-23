@@ -1,4 +1,3 @@
-
 import torch
 
 class _InfiniteSampler(torch.utils.data.Sampler):
@@ -50,8 +49,12 @@ class FastDataLoader:
     def __init__(self, dataset, batch_size, num_workers):
         super().__init__()
 
+        # Store dataset reference for accessing filenames
+        self.dataset = dataset
+        self.batch_size = batch_size
+
         batch_sampler = torch.utils.data.BatchSampler(
-            torch.utils.data.RandomSampler(dataset, replacement=False),
+            torch.utils.data.SequentialSampler(dataset),  # Use sequential instead of random
             batch_size=batch_size,
             drop_last=False
         )

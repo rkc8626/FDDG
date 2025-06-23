@@ -25,6 +25,8 @@ from domainbed.lib import misc
 from domainbed.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
 
 import tensorboardX
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 class TrainingManager:
     def __init__(self, args, hparams, algorithm, dataset, train_minibatches_iterator,
@@ -413,6 +415,9 @@ class TrainingManager:
         self.save_checkpoint('model.pkl')
         with open(os.path.join(self.args.output_dir, 'done'), 'w') as f:
             f.write('done')
+        # Recompute t-SNE after training
+        print("Recomputing t-SNE after training...")
+        self._cached_representations = self._compute_tsne_representations()
 
     def start_webapp_training(self):
         """Start training in web app mode"""
@@ -477,6 +482,9 @@ class TrainingManager:
         self.save_checkpoint('model.pkl')
         with open(os.path.join(self.args.output_dir, 'done'), 'w') as f:
             f.write('done')
+        # Recompute t-SNE after training
+        print("Recomputing t-SNE after training...")
+        self._cached_representations = self._compute_tsne_representations()
 
     def _compute_tsne_representations(self):
         """Compute t-SNE visualization of training data representations using GPU with memory-efficient batching.
@@ -488,17 +496,16 @@ class TrainingManager:
         return self._compute_tsne_cpu()
 
     def _compute_tsne_cpu(self):
-        """CPU implementation of t-SNE visualization."""
+        """CPU implementation of t-SNE visualization (3D for bddperson)."""
         try:
-            # Similar structure as GPU version but using numpy
             features_list = []
             metadata = {
-                'labels': [],
-                'sensitive': [],
-                'environments': [],
+                'labels': [],           # isperson
+                'sensitive': [],        # bad/good weather
+                'environments': [],     # darktime/daytime
                 'env_sizes': {},
                 'predicted_labels': [],
-                'split_types': []  # Add split type tracking
+                'split_types': []
             }
 
             print("\nCollecting representations from all environments (CPU):")
@@ -513,15 +520,14 @@ class TrainingManager:
                         x = x.to(self.device)
                         features = self.algorithm.featurizer(x)
                         env_features.append(features.cpu().numpy())
+                        # For bddperson: y = isperson, z = bad/good weather
                         env_labels.append(y.cpu().numpy())
                         env_sensitive.append(z.cpu().numpy())
-                        # Predict class labels using the model's classifier
                         logits = self.algorithm.classifier(features)
                         preds = torch.argmax(logits, dim=1)
                         metadata['predicted_labels'].append(preds.cpu().numpy())
 
                 if env_features:
-                    # Concatenate environment data
                     env_features = np.concatenate(env_features)
                     env_labels = np.concatenate(env_labels)
                     env_sensitive = np.concatenate(env_sensitive)
@@ -531,55 +537,62 @@ class TrainingManager:
                     metadata['labels'].append(env_labels)
                     metadata['sensitive'].append(env_sensitive)
                     if env_predicted is not None:
-                        metadata['predicted_labels'] = [env_predicted]  # Will be concatenated later
+                        metadata['predicted_labels'] = [env_predicted]
 
                     env_size = len(env_features)
-                    metadata['environments'].extend([env_idx] * env_size)
-                    metadata['env_sizes'][env_idx] = env_size
+                    # Map environment index to darktime/daytime for bddperson
+                    if 'dark' in name.lower():
+                        env_name = 'darktime'
+                    elif 'day' in name.lower():
+                        env_name = 'daytime'
+                    else:
+                        env_name = name
+                    metadata['environments'].extend([env_name] * env_size)
+                    metadata['env_sizes'][env_name] = env_size
 
-                    # Add split type information
                     split_type = 'in' if 'in' in name else 'out'
                     metadata['split_types'].extend([split_type] * env_size)
 
-                    print(f"  - Environment {env_idx} ({split_type}): {env_size} samples")
+                    print(f"  - Environment {env_idx} ({env_name}, {split_type}): {env_size} samples")
                     print(f"  - Feature dimension: {env_features.shape[1]}")
 
             if not features_list:
                 print("No representations available")
                 return None
 
-            # Concatenate all data
             all_features = np.concatenate(features_list)
             metadata['labels'] = np.concatenate(metadata['labels'])
             metadata['sensitive'] = np.concatenate(metadata['sensitive'])
             if metadata['predicted_labels']:
                 metadata['predicted_labels'] = np.concatenate(metadata['predicted_labels'])
 
-            print("\nComputing t-SNE embedding...")
+            print("\nComputing 3D t-SNE embedding...")
             print(f"Total samples: {len(metadata['environments'])}")
             print(f"Feature dimension: {all_features.shape[1]}")
             print(f"Number of environments: {len(metadata['env_sizes'])}")
             print(f"Split types: {set(metadata['split_types'])}")
 
-            # Normalize features
             mean = np.mean(all_features, axis=0)
             std = np.std(all_features, axis=0)
             all_features = (all_features - mean) / (std + 1e-8)
 
-            # Compute t-SNE
-            from sklearn.manifold import TSNE
-            tsne = TSNE(n_components=2, random_state=42)
-            tsne_points = tsne.fit_transform(all_features)
-            metadata['features'] = all_features
+            # from sklearn.manifold import TSNE
+            # tsne = TSNE(n_components=3, random_state=42)
+            # tsne_points = tsne.fit_transform(all_features)
+            # metadata['features'] = all_features
 
-            print("\nt-SNE computation complete:")
-            print(f"Output shape: {tsne_points.shape}")
-            for env_idx, size in metadata['env_sizes'].items():
-                split_type = 'in' if 'in' in self.eval_loader_names[env_idx] else 'out'
-                print(f"Environment {env_idx} ({split_type}): {size} samples")
+            # print("\n3D t-SNE computation complete:")
+            # print(f"Output shape: {tsne_points.shape}")
+            # for env_name, size in metadata['env_sizes'].items():
+            #     print(f"Environment {env_name}: {size} samples")
+
+            # return {
+            #     'points': tsne_points,
+            #     'metadata': metadata
+            # }
 
             return {
-                'points': tsne_points,
+                'points': all_features,
                 'metadata': metadata
             }
 
@@ -595,6 +608,22 @@ class TrainingManager:
         """Manually invalidate the representation cache"""
         self._cached_representations = None
         print("t-SNE cache invalidated")
+
+    def plot_tsne_2d(self, features, labels, save_path=None):
+        """Plot a 2D t-SNE visualization using matplotlib."""
+        from sklearn.manifold import TSNE
+        import matplotlib.pyplot as plt
+        tsne = TSNE(n_components=2, random_state=42)
+        tsne_points = tsne.fit_transform(features)
+        plt.figure(figsize=(8, 6))
+        scatter = plt.scatter(tsne_points[:, 0], tsne_points[:, 1], c=labels, cmap='tab10', alpha=0.7)
+        plt.xlabel('t-SNE 1')
+        plt.ylabel('t-SNE 2')
+        plt.title('2D t-SNE Visualization')
+        plt.colorbar(scatter, label='Label')
+        if save_path:
+            plt.savefig(save_path)
+        plt.show()
 
 def main(provided_args=None):
     """Main function that can accept args from command line or from another script"""
