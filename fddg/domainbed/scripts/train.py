@@ -141,9 +141,10 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
 
                 # Create prediction entry
                 prediction = {
-                    'filename': filename,
+                    'name': filename,
                     'filepath': filepath,
                     'predicted_class': predicted_classes[i].item(),
+                    "p_hat_x - isperson": probabilities[i][1].item() - predicted_classes[i].item(),
                     'predicted_probabilities': probabilities[i].cpu().numpy().tolist(),
                     'is_person': predicted_classes[i].item() == 1,
                     'confidence': confidences_batch[i].item(),

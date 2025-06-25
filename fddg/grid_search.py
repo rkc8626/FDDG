@@ -62,28 +62,103 @@ def get_algorithm_specific_params():
         }
     }
 
-def get_param_combinations(algorithm):
-    """Get all parameter combinations for a specific algorithm"""
-    if algorithm == 'Fish':
-        # Hard code the remaining combinations for Fish
-        return [
-            {'lr': 1e-4, 'batch_size': 64, 'weight_decay': 0.0, 'meta_lr': 0.5},
-            {'lr': 1e-4, 'batch_size': 64, 'weight_decay': 1e-4, 'meta_lr': 0.5}
-        ]
+def get_param_combinations(algorithm, use_specific_configs=False):
+    """Get parameter combinations for a specific algorithm"""
+    if use_specific_configs:
+        # Use specific configurations provided by user
+        algorithm_configs = {
+            'ERM': {
+                'lr': 0.0001,
+                'batch_size': 32,
+                'weight_decay': 0.0
+            },
+            'Fish': {
+                'lr': 0.0001,
+                'batch_size': 64,
+                'weight_decay': 0.0,
+                'meta_lr': 0.5  # keeping the default meta_lr
+            },
+            'GroupDRO': {
+                'lr': 0.0001,
+                'batch_size': 32,
+                'weight_decay': 0.0001,
+                'groupdro_eta': 1e-2  # keeping the default groupdro_eta
+            },
+            'IGA': {
+                'lr': 5e-05,
+                'batch_size': 32,
+                'weight_decay': 0.0,
+                'penalty': 1000  # keeping the default penalty
+            },
+            'IRM': {
+                'lr': 0.0001,
+                'batch_size': 64,
+                'weight_decay': 0.0,
+                'irm_lambda': 1e2,  # keeping the default irm_lambda
+                'irm_penalty_anneal_iters': 500  # keeping the default irm_penalty_anneal_iters
+            },
+            'Mixup': {
+                'lr': 5e-05,
+                'batch_size': 32,
+                'weight_decay': 0.0001,
+                'mixup_alpha': 0.2  # keeping the default mixup_alpha
+            },
+            'SagNet': {
+                'lr': 0.0001,
+                'batch_size': 32,
+                'weight_decay': 0.0001,
+                'sag_w_adv': 0.1  # keeping the default sag_w_adv
+            },
+            'MBDG': {
+                'lr': 0.0001,
+                'batch_size': 32,
+                'weight_decay': 0.0001,
+                'mbdg_dual_step_size': 0.05,  # keeping the default mbdg_dual_step_size
+                'mbdg_fair_step_size': 0.05,  # keeping the default mbdg_fair_step_size
+                'mbdg_gamma1': 0.025,  # keeping the default mbdg_gamma1
+                'mbdg_gamma2': 0.025  # keeping the default mbdg_gamma2
+            }
+        }
 
-    # For other algorithms, use the original grid search
-    base_params = get_base_param_grid()
-    algorithm_params = get_algorithm_specific_params()[algorithm]
+        # Return the specific configuration for the algorithm
+        if algorithm in algorithm_configs:
+            return [algorithm_configs[algorithm]]
+        else:
+            # For algorithms not in the specific config, fall back to original grid search
+            base_params = get_base_param_grid()
+            algorithm_params = get_algorithm_specific_params()[algorithm]
 
-    # Combine base and algorithm-specific parameters
-    all_params = {**base_params, **algorithm_params}
+            # Combine base and algorithm-specific parameters
+            all_params = {**base_params, **algorithm_params}
 
-    # Generate all combinations
-    keys = list(all_params.keys())
-    values = list(all_params.values())
-    combinations = list(itertools.product(*values))
+            # Generate all combinations
+            keys = list(all_params.keys())
+            values = list(all_params.values())
+            combinations = list(itertools.product(*values))
 
-    return [dict(zip(keys, combo)) for combo in combinations]
+            return [dict(zip(keys, combo)) for combo in combinations]
+    else:
+        # Use original grid search approach
+        if algorithm == 'Fish':
+            # Hard code the remaining combinations for Fish
+            return [
+                {'lr': 1e-4, 'batch_size': 64, 'weight_decay': 0.0, 'meta_lr': 0.5},
+                {'lr': 1e-4, 'batch_size': 64, 'weight_decay': 1e-4, 'meta_lr': 0.5}
+            ]
+
+        # For other algorithms, use the original grid search
+        base_params = get_base_param_grid()
+        algorithm_params = get_algorithm_specific_params()[algorithm]
+
+        # Combine base and algorithm-specific parameters
+        all_params = {**base_params, **algorithm_params}
+
+        # Generate all combinations
+        keys = list(all_params.keys())
+        values = list(all_params.values())
+        combinations = list(itertools.product(*values))
+
+        return [dict(zip(keys, combo)) for combo in combinations]
 
 def run_experiment(args, algorithm, hparams):
     # Convert hparams to JSON string
@@ -179,10 +254,13 @@ def main():
     parser.add_argument('--base_output_dir', type=str, default='grid_search_results',
                         help='Base directory for output')
     parser.add_argument('--algorithms', type=str, nargs='+',
+        # Other algorithms: CORAL, MMD, VREx, MLDG, ANDMask
         default=['ERM', 'IRM', 'GroupDRO', 'Mixup', 'CORAL', 'MMD', 'VREx', 'MLDG', 'MBDG', 'IGA', 'ANDMask', 'Fish', 'SagNet'],
         help='Algorithms to evaluate')
     parser.add_argument('--skip_existing', action='store_true',
                         help='Skip configurations that have already been run')
+    parser.add_argument('--use_specific_configs', action='store_true',
+                        help='Use specific hyperparameter configurations instead of grid search')
     args = parser.parse_args()
 
     # Create base output directory
@@ -196,7 +274,7 @@ def main():
         print(f"\n=== Running experiments for {algorithm} ===")
 
         # Get parameter combinations for this algorithm
-        param_combinations = get_param_combinations(algorithm)
+        param_combinations = get_param_combinations(algorithm, args.use_specific_configs)
 
         # Run experiments for each parameter combination
         for hparams in tqdm(param_combinations, desc=f"{algorithm} parameters", leave=False):
