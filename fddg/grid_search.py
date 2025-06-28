@@ -192,7 +192,9 @@ def run_experiment(args, algorithm, hparams):
         f"--algorithm={algorithm}",
         f"--test_env={args.test_env}",
         f"--output_dir={output_dir}",
-        f"--hparams={hparams_str}"
+        f"--hparams={hparams_str}",
+        f"--save_predictions_every_checkpoint"
+
     ]
 
     # Run command
