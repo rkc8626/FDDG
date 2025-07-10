@@ -3,6 +3,31 @@ name = "fddg"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+requires-python = ">=3.10"
 dependencies = [
-
+    "docker-pycreds>=0.4.0",
+    "eagerpy==0.29.0",
+    "foolbox==3.3.1",
+    "gdown>=4.4.0",
+    "gitdb>=4.0.7",
+    "gitpython>=3.1.14",
+    "googledrivedownloader>=1.1.0",
+    "littleutils>=0.2.4",
+    "markupsafe>=2.1.3,<3.0",
+    "matplotlib>=3.10.3",
+    "numpy<2",
+    "outdated>=0.2.0",
+    "pathtools>=0.1.2",
+    "promise>=2.3",
+    "protobuf>=3.20.3,<4.24",
+    "pydub>=0.25.1",
+    "python-louvain>=0.16",
+    "resampy>=0.3.1",
+    "shortuuid>=1.0.13",
+    "tensorboardx>=2.6",
+    "torch>=2.7.1",
+    "torchaudio>=2.7.1",
+    "torchvision>=0.22.1",
+    "wandb>=0.13.0",
+    "wilds>=2.0.0",
 ]

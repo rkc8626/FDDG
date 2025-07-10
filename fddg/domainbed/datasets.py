@@ -83,7 +83,7 @@ class Debug224(Debug):
 
 class NYPD_OneEnv(Dataset):
     def __init__(self, env):
-        df = pd.read_csv("/home/YOUR_PATH/data/NYPD/" + str(env) + ".csv", encoding='latin-1', low_memory=False)
+        df = pd.read_csv("/home/chenz1/toorange/Data/FDDG_Data/NYPD/" + str(env) + ".csv", encoding='latin-1', low_memory=False)
 
         self.x, self.y, self.z = self.df2tensor(df)
 
@@ -201,7 +201,9 @@ class CCMNIST1(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 500
     ENVIRONMENTS = [0, 1, 2]
     def __init__(self, root, test_envs,hparams):
-        self.dir = os.path.join("/home/YOUR_PATH/data/CCMNIST1/")
+    # self.dir = os.path.join("/home/YOUR_PATH/data/CCMNIST1/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/FDDG_Data/CCMNIST1")
+
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
 class BDDPerson(MultipleEnvironmentImageFolder):
@@ -221,7 +223,7 @@ class FairFace(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 500
     ENVIRONMENTS = ['0', '1', '2', '3', '4', '5', '6']
     def __init__(self, root, test_envs,hparams):
-        self.dir = os.path.join("/home/YOUR_PATH/data/FairFace/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/FDDG_Data/FairFace/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
 class YFCC(MultipleEnvironmentImageFolder):
@@ -229,7 +231,7 @@ class YFCC(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ['0', '1', '2']
     def __init__(self, root, test_envs,hparams):
-        self.dir = os.path.join("/home/YOUR_PATH/data/YFCC/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/FDDG_Data/YFCC/")
         super().__init__(self.dir, test_envs, hparams['data_augmentation'], hparams)
 
 class VLCS(MultipleEnvironmentImageFolder):

@@ -1,18 +1,19 @@
-docker-pycreds
-eagerpy==0.29.0
-foolbox==3.3.1
-gdown==3.12.2
-gitdb==4.0.7
-gitpython==3.1.14
-googledrivedownloader==0.4
-littleutils==0.2.2
-outdated==0.2.0
-pathtools==0.1.2
-promise==2.3
-pydub==0.25.1
-python-louvain==0.15
-resampy==0.2.2
-shortuuid==1.0.1
-tensorboardx==2.1
-wandb==0.10.28
-protobuf==3.20.3
+docker-pycreds              # OK
+eagerpy==0.29.0             # OK
+foolbox==3.3.1              # OK
+gdown>=4.4.0                # >=3.12.2 recommended due to OAuth fixes
+gitdb>=4.0.7                # Slightly loosened
+gitpython>=3.1.14           # OK
+googledrivedownloader       # OK
+littleutils                 # OK
+outdated>=0.2.0             # OK
+pathtools                   # OK
+promise>=2.3                # OK
+pydub>=0.25.1               # OK
+python-louvain              # OK
+resampy>=0.3.1              # Upgrade to support newer NumPy/Scipy
+shortuuid                   # OK
+tensorboardx>=2.6           # Use >=2.6 to support modern protobuf + PyTorch logs
+wandb>=0.13.0               # Upgrade to ensure compatibility with Torch 2.2 logs
+protobuf>=3.20.3,<4.24      # Cap to avoid incompatibility with TensorFlow or PyTorch logs
+numpy<2

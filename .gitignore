@@ -40,3 +40,5 @@ fddg/results_tsne/
 fddg/domainbed/scripts/__pycache__/
 fddg/domainbed/munit/munit_results
 results_tsne/
+.fddg3
+backup
