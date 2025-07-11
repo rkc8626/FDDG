@@ -47,9 +47,70 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
 
     confidences = []
 
+    # Create a mapping from shuffled indices to original dataset indices
+    def create_index_mapping(dataset):
+        """Create a mapping from current dataset indices to original dataset indices"""
+        mapping = []
+
+        if hasattr(dataset, 'shuffle') and hasattr(dataset, 'ori_dataset'):
+            # This is a Subset with shuffling
+            for i in range(len(dataset)):
+                original_idx = dataset.shuffle[i].item()
+                mapping.append(original_idx)
+        else:
+            # No shuffling, direct mapping
+            for i in range(len(dataset)):
+                mapping.append(i)
+
+        return mapping
+
+    # Create a function to get file information from original dataset
+    def get_file_info(dataset, original_idx):
+        """Get file information from the original dataset"""
+        filename = None
+        filepath = None
+        additional_labels = {}
+
+        try:
+            if hasattr(dataset, 'ori_dataset'):
+                # This is a ConcatDataset
+                concat_dataset = dataset.ori_dataset
+                if hasattr(concat_dataset, 'datasets'):
+                    # Find which sub-dataset this index belongs to
+                    cumulative_length = 0
+                    for env_idx, sub_dataset in enumerate(concat_dataset.datasets):
+                        if original_idx < cumulative_length + len(sub_dataset):
+                            local_idx = original_idx - cumulative_length
+                            if hasattr(sub_dataset, 'samples') and local_idx < len(sub_dataset.samples):
+                                filepath, _ = sub_dataset.samples[local_idx]
+                                filename = os.path.basename(filepath)
+
+                                # Get additional labels in a generic way
+                                if hasattr(sub_dataset, 'dict') and isinstance(sub_dataset.dict, dict):
+                                    if filename in sub_dataset.dict:
+                                        additional_labels_raw = sub_dataset.dict[filename]
+                                        if isinstance(additional_labels_raw, list):
+                                            # Convert list to generic numbered keys
+                                            for i, value in enumerate(additional_labels_raw):
+                                                additional_labels[f'attribute_{i}'] = value
+                                        elif isinstance(additional_labels_raw, dict):
+                                            additional_labels = additional_labels_raw
+                            break
+                        cumulative_length += len(sub_dataset)
+        except Exception as e:
+            print(f"Warning: Could not get file info for original index {original_idx}. Error: {e}")
+
+        return filename, filepath, additional_labels
+
     # Create a simple dataloader for all images across all environments
     all_samples = []
+    index_mappings = []
+
     for env_idx, env in enumerate(dataset):
+        # Create index mapping for this environment
+        env_mapping = create_index_mapping(env)
+        index_mappings.append(env_mapping)
+
         for sample_idx, sample in enumerate(env):
             # Add environment and sample information to each sample
             if len(sample) == 3:
@@ -102,59 +163,29 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
                 env_idx = env_indices[i].item()
                 sample_idx = sample_indices[i].item()
 
-                # Get filename and additional labels from the original dataset
-                filename = None
-                filepath = None
-                additional_labels = {}
+                # Get the original index using the mapping
+                original_idx = index_mappings[env_idx][sample_idx]
 
-                # Try to get file information from the original dataset
-                try:
-                    original_env = dataset[env_idx]
-                    if hasattr(original_env, 'samples') and sample_idx < len(original_env.samples):
-                        filepath, _ = original_env.samples[sample_idx]
-                        filename = os.path.basename(filepath)
-                    elif hasattr(original_env, 'imgs') and sample_idx < len(original_env.imgs):
-                        filepath, _ = original_env.imgs[sample_idx]
-                        filename = os.path.basename(filepath)
-                except Exception as e:
-                    print(f"Warning: Could not get file info for env {env_idx}, sample {sample_idx}. Error: {e}")
+                # Get file information
+                filename, filepath, additional_labels = get_file_info(dataset, original_idx)
 
                 if filename is None:
                     filename = f"env{env_idx}_sample{sample_idx}.jpg"
                     filepath = ""
 
-                # Try to get additional labels from dataset metadata
-                try:
-                    if hasattr(dataset, 'dict') and isinstance(dataset.dict, dict):
-                        if filename in dataset.dict:
-                            additional_labels_raw = dataset.dict[filename]
-                            if isinstance(additional_labels_raw, list) and len(additional_labels_raw) >= 3:
-                                additional_labels = {
-                                    'timeofday': additional_labels_raw[0],
-                                    'isperson': additional_labels_raw[1],
-                                    'weather': additional_labels_raw[2]
-                                }
-                            elif isinstance(additional_labels_raw, dict):
-                                additional_labels = additional_labels_raw
-                except Exception as e:
-                    print(f"Warning: Could not get additional labels for {filename}. Error: {e}")
-
-                # Create prediction entry
+                # Create prediction entry with generic field names
                 prediction = {
-                    'name': filename,
+                    'filename': filename,
                     'filepath': filepath,
                     'predicted_class': predicted_classes[i].item(),
-                    "p_hat_x - isperson": probabilities[i][1].item() - predicted_classes[i].item(),
+                    'prediction_confidence': confidences_batch[i].item(),
                     'predicted_probabilities': probabilities[i].cpu().numpy().tolist(),
-                    'is_person': predicted_classes[i].item() == 1,
-                    'confidence': confidences_batch[i].item(),
+                    'correct_prediction': predicted_classes[i].item() == y[i].item(),
                     'true_label': y[i].item(),
                     'sensitive_attribute': z[i].item(),
                     'environment': env_idx,
                     'sample_index': sample_idx,
-                    'timeofday': env_idx,
-                    'isperson': y[i].item(),
-                    'weather': z[i].item()
+                    'original_index': original_idx
                 }
 
                 # Add additional labels if available
