@@ -357,10 +357,10 @@ if __name__ == "__main__":
         if len(uda):
             uda_splits.append((uda, uda_weights))
 
-    print("\nFinal split sizes:")
-    print(f"In splits: {[len(x[0]) for x in in_splits]}")
-    print(f"Out splits: {[len(x[0]) for x in out_splits]}")
-    print(f"UDA splits: {[len(x[0]) for x in uda_splits]}")
+    # print("\nFinal split sizes:")
+    # print(f"In splits: {[len(x[0]) for x in in_splits]}")
+    # print(f"Out splits: {[len(x[0]) for x in out_splits]}")
+    # print(f"UDA splits: {[len(x[0]) for x in uda_splits]}")
 
     # Print sensitive attribute stats for each split
     def print_sensitive_stats(env):
@@ -382,17 +382,17 @@ if __name__ == "__main__":
             print("No sensitive attribute found.")
 
 
-    print_sensitive_stats(dataset[1])
+    # print_sensitive_stats(dataset[1])
 
-    print_sensitive_stats(dataset[0])
+    # print_sensitive_stats(dataset[0])
 
-    print_sensitive_stats(in_splits[0][0])
+    # print_sensitive_stats(in_splits[0][0])
 
-    print_sensitive_stats(in_splits[1][0])
+    # print_sensitive_stats(in_splits[1][0])
 
-    print_sensitive_stats(out_splits[0][0])
+    # print_sensitive_stats(out_splits[0][0])
 
-    print_sensitive_stats(out_splits[1][0])
+    # print_sensitive_stats(out_splits[1][0])
 
     if args.task == "domain_adaptation" and len(uda_splits) == 0:
         raise ValueError("Not enough unlabeled samples for domain adaptation.")
