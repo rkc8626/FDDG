@@ -26,12 +26,16 @@ from domainbed.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
 
 import tensorboardX
 
-def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
+def save_predictions_to_json(hparams, algorithm, dataset, device, output_dir, step=None, log_step_progress=False):
     """Save predictions to JSON files using a simple dataloader for all images"""
     algorithm.eval()
     algorithm.to(device)
 
+    if log_step_progress:
+        print("Point 4.1 (create_simple_dataloader): ", step)
+
     all_predictions = []
+
     summary = {
         'total_samples': 0,
         'correct_predictions': 0,
@@ -52,6 +56,8 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
         """Create a mapping from current dataset indices to original dataset indices"""
         mapping = []
 
+        print("Point 4.2 (create_index_mapping) ")
+
         if hasattr(dataset, 'shuffle') and hasattr(dataset, 'ori_dataset'):
             # This is a Subset with shuffling
             for i in range(len(dataset)):
@@ -70,6 +76,7 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
         filename = None
         filepath = None
         additional_labels = {}
+        print("Point 4.3 (get_file_info) ")
 
         try:
             if hasattr(dataset, 'ori_dataset'):
@@ -106,6 +113,8 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
     all_samples = []
     index_mappings = []
 
+    print("Point 4.4 (all_samples) ")
+
     for env_idx, env in enumerate(dataset):
         # Create index mapping for this environment
         env_mapping = create_index_mapping(env)
@@ -137,9 +146,9 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
     simple_dataset = SimpleDataset(all_samples)
     simple_loader = torch.utils.data.DataLoader(
         dataset=simple_dataset,
-        batch_size=64,
+        batch_size= hparams['batch_size'],
         shuffle=False,
-        num_workers=4
+        num_workers= dataset.N_WORKERS
     )
 
     print(f"Processing {len(all_samples)} total samples across {len(dataset)} environments")
@@ -176,7 +185,6 @@ def save_predictions_to_json(algorithm, dataset, device, output_dir, step=None):
                 # Create prediction entry with generic field names
                 prediction = {
                     'filename': filename,
-                    'filepath': filepath,
                     'predicted_class': predicted_classes[i].item(),
                     'prediction_confidence': confidences_batch[i].item(),
                     'predicted_probabilities': probabilities[i].cpu().numpy().tolist(),
@@ -309,8 +317,10 @@ if __name__ == "__main__":
 
     if torch.cuda.is_available():
         device = "cuda"
+        print("------Using GPU------")
     else:
         device = "cpu"
+        print("------Using CPU------")
 
     if args.dataset in vars(datasets):
         dataset = vars(datasets)[args.dataset](args.data_dir,
@@ -383,15 +393,10 @@ if __name__ == "__main__":
 
 
     # print_sensitive_stats(dataset[1])
-
     # print_sensitive_stats(dataset[0])
-
     # print_sensitive_stats(in_splits[0][0])
-
     # print_sensitive_stats(in_splits[1][0])
-
     # print_sensitive_stats(out_splits[0][0])
-
     # print_sensitive_stats(out_splits[1][0])
 
     if args.task == "domain_adaptation" and len(uda_splits) == 0:
@@ -416,7 +421,7 @@ if __name__ == "__main__":
 
     eval_loaders = [FastDataLoader(
         dataset=env,
-        batch_size=64,
+        batch_size=hparams['batch_size'],
         num_workers=dataset.N_WORKERS)
         for env, _ in (in_splits + out_splits + uda_splits)]
     eval_weights = [None for _, weights in (in_splits + out_splits + uda_splits)]
@@ -480,8 +485,12 @@ if __name__ == "__main__":
 
 
     last_results_keys = None
+    print("Total steps: ", n_steps)
     for step in range(start_step, n_steps):
+        log_step_progress = step % 100 == 0
         step_start_time = time.time()
+        if log_step_progress:
+            print("Point 0 (begin): ", step)
         # train minibathes train/uda/eval
         minibatches_device = [(x.to(device), y.to(device), z.to(device))
         for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
@@ -491,12 +500,16 @@ if __name__ == "__main__":
         else:
             uda_device = None
         step_vals = algorithm.update(minibatches_device, uda_device)
+        if log_step_progress:
+            print("Point 1 (algorithm.update): ", step)
         checkpoint_vals['step_time'].append(time.time() - step_start_time)
         write_loss(step, algorithm, train_writer)
-
+        if log_step_progress:
+            print("Point 2 (write_loss): ", step)
         for key, val in step_vals.items():
             checkpoint_vals[key].append(val)
-
+        if log_step_progress:
+            print("Point 3 (checkpoint_vals): ", step)
         if (step % checkpoint_freq == 0) or (step == n_steps - 1):
         # if False:
             results = {
@@ -590,14 +603,15 @@ if __name__ == "__main__":
             misc.print_row([aucs[key] for key in aucs_keys],
                            colwidth=12)
 
-            print()
+            if log_step_progress:
+                print("Point 4 (results): ", step)
 
             results.update({
                 'hparams': hparams,
                 'args': vars(args)
             })
 
-            epochs_path = os.path.join(args.output_dir, 'results.jsonl')
+            epochs_path = os.path.join(args.output_dir, 'results.json')
             with open(epochs_path, 'a') as f:
                 f.write(json.dumps(results, sort_keys=True) + "\n")
 
@@ -609,13 +623,13 @@ if __name__ == "__main__":
                 save_checkpoint(f'model_step{step}.pkl')
 
             if args.save_predictions_every_checkpoint:
-                save_predictions_to_json(algorithm, dataset, device, args.output_dir, step=step)
+                save_predictions_to_json(hparams, algorithm, dataset, device, args.output_dir, step=step, log_step_progress=log_step_progress)
 
     save_checkpoint('model.pkl')
 
     # Save predictions for all images
     if not args.save_predictions_every_checkpoint:
-        save_predictions_to_json(algorithm, dataset, device, args.output_dir)
+        save_predictions_to_json(hparams, algorithm, dataset, device, args.output_dir, log_step_progress=log_step_progress)
 
     with open(os.path.join(args.output_dir, 'done'), 'w') as f:
         f.write('done')

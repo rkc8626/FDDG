@@ -42,3 +42,8 @@ fddg/domainbed/munit/munit_results
 results_tsne/
 .fddg3
 backup
+fddg/domainbed/munit/munit_results_BDD
+
+# for 4 old datasets
+results
+results_test_IRM_FairFace

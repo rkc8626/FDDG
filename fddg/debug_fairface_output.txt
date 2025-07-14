@@ -1,0 +1,104 @@
+Environment:
+	Python: 3.11.12
+	PyTorch: 2.7.1+cu128
+	Torchvision: 0.22.1+cu128
+	CUDA: 12.8
+	CUDNN: 90701
+	NumPy: 1.26.3
+	PIL: 11.0.0
+Args:
+	algorithm: IRM
+	checkpoint_freq: None
+	data_dir: /home/chenz1/toorange/Data
+	dataset: FairFace
+	holdout_fraction: 0.2
+	hparams: None
+	hparams_seed: 0
+	output_dir: ./results_test_IRM_FairFace
+	save_model_every_checkpoint: False
+	save_predictions_every_checkpoint: True
+	seed: 0
+	skip_model_save: False
+	step: 2
+	steps: None
+	task: domain_generalization
+	test_envs: [0]
+	trial_seed: 0
+	uda_holdout_fraction: 0
+HParams:
+	batch_size: 22
+	class_balanced: False
+	data_augmentation: True
+	irm_lambda: 100.0
+	irm_penalty_anneal_iters: 500
+	lr: 5e-05
+	nonlinear_classifier: False
+	resnet18: False
+	resnet_dropout: 0.0
+	weight_decay: 0.0
+------Using GPU------
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+[SensitiveImageFolder] Second element counts: 0s=51778, 1s=45920
+[SensitiveImageFolder] WARNING: 70072 entries have a first element not 0 or 1!
+
+Debugging dataset splitting:
+Dataset type: <class 'domainbed.datasets.FairFace'>
+Number of environments: 7
+Test environments: [0]
+Holdout fraction: 0.2
+
+Processing environment 0:
+Environment size: 13789
+Split sizes - in: 11032, out: 2757
+Test env split - in: 11032, uda: 0
+
+Processing environment 1:
+Environment size: 13837
+Split sizes - in: 11070, out: 2767
+
+Processing environment 2:
+Environment size: 13835
+Split sizes - in: 11068, out: 2767
+
+Processing environment 3:
+Environment size: 14990
+Split sizes - in: 11992, out: 2998
+
+Processing environment 4:
+Environment size: 10425
+Split sizes - in: 8340, out: 2085
+
+Processing environment 5:
+Environment size: 12210
+Split sizes - in: 9768, out: 2442
+
+Processing environment 6:
+Environment size: 18612
+Split sizes - in: 14890, out: 3722
+Hparams:  {'data_augmentation': True, 'resnet18': False, 'resnet_dropout': 0.0, 'class_balanced': False, 'nonlinear_classifier': False, 'irm_lambda': 100.0, 'irm_penalty_anneal_iters': 500, 'lr': 5e-05, 'weight_decay': 0.0, 'batch_size': 22}
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py:626: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/orange/ufdatastudios/chenz1/FDDG/.venv/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Total steps:  8001
+Point 0 (begin):  0
+Point 1 (algorithm.update):  0
+Point 2 (write_loss):  0
+Point 3 (checkpoint_vals):  0
+[md] y_1_s_0: 806.4683227539062, y_1_s_1: 791.856689453125, s_0: 5523.0, s_1: 5509.0
+[md] result: 0.0022812485694885254
+[dp] s_0: 5523.0, y_1_s_0: 0.0, s_1: 5509.0, y_1_s_1: 0.0
+[eo] y_1_s_0: 482.0, yhat_1_y_1_s_0: 0.0, y_1_s_1: 548.0, yhat_1_y_1_s_1: 0.0
