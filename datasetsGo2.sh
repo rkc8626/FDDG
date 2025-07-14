@@ -13,9 +13,9 @@ mkdir -p "$OUT_DIR"
 
 # Datasets and Algorithms
 # datasets=(CCMNIST1 FairFace NYPD YFCC)
-datasets=(CCMNIST1)
+datasets=(FairFace)
 # algorithms=(ERM Fish GroupDRO IGA IRM Mixup SagNet)
-algorithms=(GroupDRO IGA IRM Mixup SagNet)
+algorithms=(Fish GroupDRO IGA IRM Mixup SagNet)
 
 # Prepare total tasks
 total_tasks=$(( ${#datasets[@]} * ${#algorithms[@]} ))

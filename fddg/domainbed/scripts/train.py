@@ -31,8 +31,8 @@ def save_predictions_to_json(hparams, algorithm, dataset, device, output_dir, st
     algorithm.eval()
     algorithm.to(device)
 
-    if log_step_progress:
-        print("Point 4.1 (create_simple_dataloader): ", step)
+    # if log_step_progress:
+    #     print("Point 4.1 (create_simple_dataloader): ", step)
 
     all_predictions = []
 
@@ -56,7 +56,7 @@ def save_predictions_to_json(hparams, algorithm, dataset, device, output_dir, st
         """Create a mapping from current dataset indices to original dataset indices"""
         mapping = []
 
-        print("Point 4.2 (create_index_mapping) ")
+        # print("Point 4.2 (create_index_mapping) ")
 
         if hasattr(dataset, 'shuffle') and hasattr(dataset, 'ori_dataset'):
             # This is a Subset with shuffling
@@ -76,7 +76,7 @@ def save_predictions_to_json(hparams, algorithm, dataset, device, output_dir, st
         filename = None
         filepath = None
         additional_labels = {}
-        print("Point 4.3 (get_file_info) ")
+        # print("Point 4.3 (get_file_info) ")
 
         try:
             if hasattr(dataset, 'ori_dataset'):
@@ -109,49 +109,53 @@ def save_predictions_to_json(hparams, algorithm, dataset, device, output_dir, st
 
         return filename, filepath, additional_labels
 
-    # Create a simple dataloader for all images across all environments
-    all_samples = []
-    index_mappings = []
+    # Create a reference-based dataset class that doesn't copy data into memory
+    class ReferenceDataset(torch.utils.data.Dataset):
+        def __init__(self, dataset, index_mappings):
+            self.dataset = dataset
+            self.index_mappings = index_mappings
+            self.total_samples = sum(len(env) for env in dataset)
 
-    print("Point 4.4 (all_samples) ")
+            # Create a mapping from global index to (env_idx, sample_idx)
+            self.global_to_env_sample = []
+            for env_idx, env in enumerate(dataset):
+                for sample_idx in range(len(env)):
+                    self.global_to_env_sample.append((env_idx, sample_idx))
 
-    for env_idx, env in enumerate(dataset):
-        # Create index mapping for this environment
-        env_mapping = create_index_mapping(env)
-        index_mappings.append(env_mapping)
+        def __len__(self):
+            return self.total_samples
 
-        for sample_idx, sample in enumerate(env):
-            # Add environment and sample information to each sample
+        def __getitem__(self, global_idx):
+            env_idx, sample_idx = self.global_to_env_sample[global_idx]
+
+            # Get the sample from the original dataset
+            sample = self.dataset[env_idx][sample_idx]
+
+            # Add environment and sample information
             if len(sample) == 3:
                 x, y, z = sample
             else:
                 x, y = sample
                 z = torch.zeros_like(y)  # Default sensitive attribute
 
-            all_samples.append((x, y, z, env_idx, sample_idx))
-
-    # Create a simple dataset class
-    class SimpleDataset(torch.utils.data.Dataset):
-        def __init__(self, samples):
-            self.samples = samples
-
-        def __len__(self):
-            return len(self.samples)
-
-        def __getitem__(self, idx):
-            x, y, z, env_idx, sample_idx = self.samples[idx]
             return x, y, z, env_idx, sample_idx
 
-    # Create simple dataloader
-    simple_dataset = SimpleDataset(all_samples)
+    # Create index mappings for each environment
+    index_mappings = []
+    for env_idx, env in enumerate(dataset):
+        env_mapping = create_index_mapping(env)
+        index_mappings.append(env_mapping)
+
+    # Create reference-based dataset and dataloader
+    reference_dataset = ReferenceDataset(dataset, index_mappings)
     simple_loader = torch.utils.data.DataLoader(
-        dataset=simple_dataset,
-        batch_size= hparams['batch_size'],
+        dataset=reference_dataset,
+        batch_size=hparams['batch_size'],
         shuffle=False,
-        num_workers= dataset.N_WORKERS
+        num_workers=dataset.N_WORKERS
     )
 
-    print(f"Processing {len(all_samples)} total samples across {len(dataset)} environments")
+    print(f"Processing {len(reference_dataset)} total samples across {len(dataset)} environments")
 
     with torch.no_grad():
         for batch_idx, batch in enumerate(simple_loader):
@@ -487,10 +491,11 @@ if __name__ == "__main__":
     last_results_keys = None
     print("Total steps: ", n_steps)
     for step in range(start_step, n_steps):
-        log_step_progress = step % 100 == 0
+        log_step_progress = True
+        # log_step_progress = step % 100 == 0
         step_start_time = time.time()
-        if log_step_progress:
-            print("Point 0 (begin): ", step)
+        # if log_step_progress:
+        #     print("Point 0 (begin): ", step)
         # train minibathes train/uda/eval
         minibatches_device = [(x.to(device), y.to(device), z.to(device))
         for x, y, z in next(train_minibatches_iterator) if z is not None and y is not None and x is not None]
@@ -500,16 +505,16 @@ if __name__ == "__main__":
         else:
             uda_device = None
         step_vals = algorithm.update(minibatches_device, uda_device)
-        if log_step_progress:
-            print("Point 1 (algorithm.update): ", step)
+        # if log_step_progress:
+        #     print("Point 1 (algorithm.update): ", step)
         checkpoint_vals['step_time'].append(time.time() - step_start_time)
         write_loss(step, algorithm, train_writer)
-        if log_step_progress:
-            print("Point 2 (write_loss): ", step)
+        # if log_step_progress:
+        #     print("Point 2 (write_loss): ", step)
         for key, val in step_vals.items():
             checkpoint_vals[key].append(val)
-        if log_step_progress:
-            print("Point 3 (checkpoint_vals): ", step)
+        # if log_step_progress:
+        #     print("Point 3 (checkpoint_vals): ", step)
         if (step % checkpoint_freq == 0) or (step == n_steps - 1):
         # if False:
             results = {
@@ -603,8 +608,8 @@ if __name__ == "__main__":
             misc.print_row([aucs[key] for key in aucs_keys],
                            colwidth=12)
 
-            if log_step_progress:
-                print("Point 4 (results): ", step)
+            # if log_step_progress:
+            #     print("Point 4 (results): ", step)
 
             results.update({
                 'hparams': hparams,
