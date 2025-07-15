@@ -15,7 +15,7 @@ mkdir -p "$OUT_DIR"
 # datasets=(CCMNIST1 FairFace NYPD YFCC)
 datasets=(YFCC)
 # algorithms=(ERM Fish GroupDRO IGA IRM Mixup SagNet)
-algorithms=(ERM Fish GroupDRO IGA IRM Mixup SagNet)
+algorithms=(Fish GroupDRO IGA IRM Mixup SagNet)
 
 # Prepare total tasks
 total_tasks=$(( ${#datasets[@]} * ${#algorithms[@]} ))
@@ -53,7 +53,7 @@ for dataset in "${datasets[@]}"; do
       --algorithm=$algo \
       --test_env=0 \
       --output_dir=$result_path \
-      --save_predictions_every_checkpoint \
+      # --save_predictions_every_checkpoint \
       # > "$log_path" 2>&1
 
     echo "✅ Finished: $algo on $dataset"
