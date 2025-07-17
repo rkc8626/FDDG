@@ -13,7 +13,7 @@ mkdir -p "$OUT_DIR"
 
 # Datasets and Algorithms
 # datasets=(CCMNIST1 FairFace NYPD YFCC)
-datasets=(FairFace CCMNIST1 NYPD YFCC)
+datasets=(NYPD FairFace CCMNIST1 YFCC)
 # algorithms=(ERM Fish GroupDRO IGA IRM Mixup SagNet MBDG)
 algorithms=(MBDG)
 
