@@ -46,4 +46,8 @@ fddg/domainbed/munit/munit_results_BDD
 
 # for 4 old datasets
 results
-results_test_IRM_FairFace
+fddg/domainbed/munit/NYPD
+fddg/domainbed/munit/FairFace
+fddg/domainbed/munit/CCMNIST1
+fddg/domainbed/munit/BDDPerson
+fddg/domainbed/munit/YFCC 

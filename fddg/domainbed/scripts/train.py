@@ -395,7 +395,6 @@ if __name__ == "__main__":
         else:
             print("No sensitive attribute found.")
 
-
     # print_sensitive_stats(dataset[1])
     # print_sensitive_stats(dataset[0])
     # print_sensitive_stats(in_splits[0][0])
@@ -439,7 +438,6 @@ if __name__ == "__main__":
     algorithm_class = algorithms.get_algorithm_class(args.algorithm)
     algorithm = algorithm_class(dataset.input_shape, dataset.num_classes,
         len(dataset) - len(args.test_envs), hparams)
-
 
     if algorithm_dict is not None:
         algorithm.load_state_dict(algorithm_dict)

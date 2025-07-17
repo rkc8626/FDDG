@@ -154,16 +154,16 @@ def _hparams(algorithm, dataset, random_seed, test_envs, step):
             model_root = './domainbed/munit/saved_models/vlcs/new'
 
         elif dataset == 'CCMNIST1':
-            model_root = './domainbed/munit/saved_models/CCMNIST1/'
+            model_root = '/home/chenz1/toorange/FDDG/fddg/domainbed/munit/saved_models/CCMNIST1/'
 
         elif dataset == 'FairFace':
-            model_root = './domainbed/munit/saved_models/FairFace/'
+            model_root = '/home/chenz1/toorange/FDDG/fddg/domainbed/munit/saved_models/FairFace/'
 
         elif dataset == 'YFCC':
-            model_root = './domainbed/munit/saved_models/YFCC/'
+            model_root = '/home/chenz1/toorange/FDDG/fddg/domainbed/munit/saved_models/YFCC/'
 
         elif dataset == 'NYPD':
-            model_root = './domainbed/munit/saved_models/NYPD/'
+            model_root = '/home/chenz1/toorange/FDDG/fddg/domainbed/munit/saved_models/NYPD/'
 
         elif dataset == 'BDDPerson':
             model_root = '/home/chenz1/toorange/FDDG/fddg/domainbed/munit/saved_models/BDDPerson'

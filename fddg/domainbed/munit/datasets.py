@@ -115,7 +115,7 @@ class CCMNIST1(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = [0, 1, 2]
     def __init__(self, root, test_envs):
-        self.dir = os.path.join("/home/chenz1/toorange/Data/CCMNIST1/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/FDDG_Data/CCMNIST1/")
         super().__init__(self.dir, test_envs)
 
 class BDDPerson(MultipleEnvironmentImageFolder):
@@ -131,19 +131,18 @@ class FairFace(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ['0', '1', '2', '3', '4', '5', '6']
     def __init__(self, root, test_envs):
-        self.dir = os.path.join("/home/chenz1/toorange/Data/FairFace/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/FDDG_Data/FairFace/")
         super().__init__(self.dir, test_envs)
 
 class YFCC(MultipleEnvironmentImageFolder):
     CHECKPOINT_FREQ = 300
     ENVIRONMENTS = ['0', '1', '2']
     def __init__(self, root, test_envs):
-        self.dir = os.path.join("/home/chenz1/toorange/Data/YFCC/")
+        self.dir = os.path.join("/home/chenz1/toorange/Data/FDDG_Data/YFCC/")
         super().__init__(self.dir, test_envs)
-
 class NYPD(Dataset):
     def __init__(self, env):
-        df = pd.read_csv("/home/chenz1/toorange/Data/NYPD/" + str(env) + ".csv", encoding='latin-1', low_memory=False)
+        df = pd.read_csv("/home/chenz1/toorange/Data/FDDG_Data/NYPD/" + str(env) + ".csv", encoding='latin-1', low_memory=False)
 
         self.x, self.y, self.z = self.df2tensor(df)
 
