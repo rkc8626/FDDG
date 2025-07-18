@@ -50,4 +50,5 @@ fddg/domainbed/munit/NYPD
 fddg/domainbed/munit/FairFace
 fddg/domainbed/munit/CCMNIST1
 fddg/domainbed/munit/BDDPerson
-fddg/domainbed/munit/YFCC 
+fddg/domainbed/munit/YFCC
+newenv
